@@ -1,0 +1,387 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+
+
+.gradient-section {
+  background: linear-gradient(220deg, #A41C84 1%, #4637B8 70%);
+  color: #ffffff;
+  padding: 10px 0;
+}
+
+.white-section {
+  background: #ffffff;
+  color: #000000;
+  padding: 2rem 0;
+}
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 0 2rem;
+  overflow: hidden; /* Ensure content doesn't overflow */
+}
+
+.home-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  margin-top: -50px; /* Adjusted */
+}
+
+.home-text {
+  flex: 1;
+  padding-right: 2rem;
+  text-align: left;
+  margin: 0; /* Adjusted */
+  opacity: 0; /* Initial state for animation */
+  animation: slideInUp 1s forwards; /* Animation */
+  animation-delay: 0.5s; /* Delay for text */
+}
+
+.home-text h1, .home-text h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: #ffffff !important;
+  margin: 0; /* Adjusted */
+}
+
+.home-text h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem; /* Vertical gap */
+}
+
+.home-text h2 {
+  font-size: 2.5rem;
+}
+
+.home-text p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+  margin: 1rem 0 2rem 0; /* Adjusted vertical gap */
+  color: #ffffff !important;
+}
+
+.home-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem; /* Vertical gap */
+}
+
+.explore-button, .create-button {
+  background: transparent;
+  border: 2px solid #ffffff;
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 25px;
+  width: 8rem;
+  height: 3rem;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.explore-button:hover, .create-button:hover {
+  background: #ffffff;
+  color: #2e046d;
+}
+
+.home-image {
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0; /* Initial state for animation */
+  animation: slideInLeft 1s forwards, floatAnimation 3s infinite alternate; /* Animation */
+  background: url('./myimage.png');
+  
+  background-size: 98%;
+  
+
+  
+}
+
+.home-image img {
+  position: relative; /* Ensure the robot image is on top */
+  max-width: 100%;
+  height: auto;
+}
+
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.NftCardContainer {
+  padding: 2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.nft-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.nft-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.nft-image-container {
+  height: 250px;
+  overflow: hidden;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+
+.nft-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nft-card-body {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.nft-card-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.2rem;
+
+}
+
+.nft-card-text {
+  font-family: 'Montserrat', sans-serif;
+  
+  margin: 1rem 0;
+}
+
+.nft-card-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.nft-card-price {
+  color: #ffcc00;
+  font-size: larger;
+}
+.buy-button {
+  background-color: transparent;
+  color: #4B0082; /* Dark blue-violet color */
+  border: 2px solid #4B0082;
+  padding: 8px 20px;
+  border-radius: 20px;
+  margin-left: 10%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.buy-button:hover {
+  background-color: #4B0082;
+  color: white;
+}
+
+
+@media screen and (max-width: 768px) {
+  .home-content {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .home-text {
+    padding-right: 0;
+  }
+
+  .home-image {
+    display: none;
+  }
+
+  .container {
+    padding: 1rem;
+  }
+
+  .nft-card {
+    max-width: 20rem;
+    padding: 1rem;
+  }
+
+  .nft-image-container {
+    height: 18rem;
+  }
+
+  .nft-card-title {
+    margin-top: 0.5rem;
+  }
+
+  .nft-card-text {
+    margin: 1rem 0;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .nft-card {
+    max-width: 100%;
+    padding: 1rem;
+  }
+
+  .nft-image-container {
+    height: 16rem;
+  }
+
+  .nft-card-title {
+    font-size: 1.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .nft-card-text {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+  }
+
+  .buy-button {
+    font-size: 1.4rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .home-container{
+    margin-top: -7rem ;
+  }
+
+  .gradient-section{
+    height:40rem;
+  }
+
+  .home-text{
+    align-items: center;
+  }
+
+  .home-buttons{
+    align-items: center;
+  }
+}
+
+.filters {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.filter-options {
+  display: flex;
+  justify-content: center;
+  gap: 1rem; /* Adjusted gap between filter buttons */
+}
+
+.filter-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.filter-button {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filter-button:hover {
+  background-color: #e0e0e0;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 10px;
+}
+
+.filter-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content button {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+}
+
+.dropdown-content button:hover {
+  background-color: #ddd;
+}
+
+
+.gradient-section{
+  height:42rem !important;
+}
+
+
+/* Home.css */
+
+.like-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  gap: 5px;
+}
+
+.heart-icon {
+  font-size: 16px;
+}
+
+/* Other existing CSS styles */

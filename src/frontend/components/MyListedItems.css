@@ -1,0 +1,126 @@
+
+.containerListedItems {
+  padding: 2rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.card-custom {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.card-custom:hover {
+  transform: translateY(-10px);
+}
+
+.card-img {
+  flex: 1 0 auto;
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.card-footer-custom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #fff;
+  border-top: 1px solid #e1e1e1;
+  border-radius: 0 0 10px 10px;
+}
+
+.card-footer-custom .card-text {
+  flex: 1;
+  text-align: left;
+  color: #333;
+  font-size: 1rem;
+}
+
+.card-footer-custom .buy-button {
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+.card-footer-custom .buy-button button {
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.card-footer-custom .buy-button button:hover {
+  background-color: #0056b3;
+}
+
+@media screen and (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .card-custom {
+    max-width: 20rem;
+    padding: 1rem;
+  }
+
+  .card-img {
+    height: 18rem;
+  }
+
+  .card-footer-custom {
+    margin-top: 0.5rem;
+  }
+
+  .card-text {
+    margin: 1rem 0;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .card-custom {
+    max-width: 100%;
+    padding: 1rem;
+  }
+  
+  .card-img {
+    height: 16rem;
+  }
+  
+  .card-footer-custom {
+    margin-top: 0.5rem;
+  }
+  
+  .card-text {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+  }
+  
+  .buy-button button {
+    font-size: 1.4rem;
+    padding: 0.5rem 1rem;
+  }
+}

@@ -1,0 +1,171 @@
+/* Base Styles */
+html, body {
+  background-color: #f4f4f9;
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Container */
+.container-fluid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 50px); /* Assuming navbar height is 50px */
+  padding-top: 50px; /* Adjust based on the actual navbar height */
+}
+
+/* Content */
+.content {
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+  margin-left: auto; /* Move container to the right */
+  margin-right: 9rem; 
+  margin-top:-5rem;
+  transform: translateX(20%);/* Add some right margin for spacing */
+}
+
+
+/* Form Control */
+form .form-control {
+  background: #f9f9f9;
+  border: 2px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  color: #333;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+form .form-control::placeholder {
+  color: #aaa;
+}
+
+form .form-control:focus {
+  background: #ffffff;
+  border-color: #c4c4c4;
+  outline: none;
+}
+
+/* Custom file upload button */
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-upload {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background-color: #6200ea;
+  color: white;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.custom-file-upload:hover {
+  background-color: #4b00b5;
+}
+
+.custom-file-upload:disabled {
+  background-color: #ddd;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+/* Adjusted input container */
+.upload-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.3s;
+}
+
+.upload-container:hover {
+  border-color: #6200ea;
+}
+
+.upload-container span {
+  color: #333;
+  margin-left: 1rem;
+  font-weight: bold;
+}
+
+/* Method Selection */
+.method-selection {
+  margin-bottom: 1rem;
+}
+
+.method-selection label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.method-options {
+  display: flex;
+  justify-content: space-between;
+}
+
+.method-option {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  cursor: pointer;
+  flex-grow: 1;
+  margin-right: 1rem;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.method-option:last-child {
+  margin-right: 0;
+}
+
+.method-option span {
+  margin-left: 0.5rem;
+}
+
+.method-option.selected {
+  background-color: #6200ea;
+  border-color: #4b00b5;
+  color: white;
+}
+
+.method-option.selected svg {
+  fill: white;
+}
+
+/* Button Styles */
+.gradient-button {
+  background: linear-gradient(90deg, #6200ea 0%, #4b00b5 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.gradient-button:hover {
+  background: linear-gradient(90deg, #4b00b5 0%, #6200ea 100%);
+}
+
+.gradient-button:disabled {
+  background: #ddd;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+

@@ -1,0 +1,93 @@
+/* General styling for the navbar */
+.custom-navbar {
+/*
+* Created with https://www.css-gradient.com
+* Gradient link: https://www.css-gradient.com/?c1=a41c84&c2=4637b8&gt=l&gd=dcr
+*/
+background: #A41C84 !important;
+background: linear-gradient(270deg, #A41C84, #4637B8) !important;    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: 'Roboto', sans-serif;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.navbar-brand img {
+    margin-right: 10px;
+}
+
+.nav-link {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #ffffff;
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+    color: #f0f0f0;
+}
+
+.nav-button {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #ffffff;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-button button {
+    border: 2px solid #ffffff;
+    background: transparent;
+    padding: 5px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-button button:hover {
+    background: #ffffff;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+@media (max-width: 992px) {
+    .navbar-brand {
+        font-size: 1.3rem;
+    }
+
+    .nav-link {
+        font-size: 1rem;
+    }
+
+    .nav-button {
+        margin-top: 10px;
+    }
+
+    .nav-button button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
+    .nav-link {
+        font-size: 0.9rem;
+    }
+
+    .nav-button button {
+        padding: 5px 10px;
+    }
+}
+
+.navbar-brand img {
+    height: 45px;
+    width: 150px; /* Adjust the height of the logo */
+}

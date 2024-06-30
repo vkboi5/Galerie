@@ -101,18 +101,27 @@
   opacity: 0; /* Initial state for animation */
   animation: slideInLeft 1s forwards, floatAnimation 3s infinite alternate; /* Animation */
   background: url('./myimage.png');
-  
   background-size: 98%;
-  
+}
 
-  
+@keyframes floatAnimation {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px); /* Adjust the value for how high it floats */
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 .home-image img {
-  position: relative; /* Ensure the robot image is on top */
+  position: relative; /* Ensure the image is on top */
   max-width: 100%;
   height: auto;
 }
+
 
 
 @keyframes slideInLeft {

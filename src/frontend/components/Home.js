@@ -103,6 +103,15 @@ const HomePage = ({ marketplace, nft }) => {
   };
 
   useEffect(() => {
+    const storedLikes = JSON.parse(localStorage.getItem('likes')) || {};
+    setLikes(storedLikes);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('likes', JSON.stringify(likes));
+  }, [likes]);
+  
+  useEffect(() => {
     loadMarketplaceItems();
   }, [selectedFilter, sortOrder]);
 

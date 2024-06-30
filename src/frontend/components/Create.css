@@ -168,4 +168,28 @@ input[type="file"] {
   cursor: not-allowed;
 }
 
+.flexfordates{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
 
+.StartingDate {
+  margin-top: 14px;
+}
+.EndingDate {
+  margin-top: 14px;
+}
+
+.flexfordates1{
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;  
+}
+
+.StartingDate1{
+  margin-top: 14px;
+}
+.EndingDate1{
+  margin-top: 14px;
+}

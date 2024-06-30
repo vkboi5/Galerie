@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useState, useRef } from 'react';
 import { ethers } from "ethers";
-import { Row, Form, Button, Spinner } from 'react-bootstrap';
+import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import { FaTag, FaGavel, FaUsers } from 'react-icons/fa';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,6 +14,9 @@ const Create = ({ marketplace, nft }) => {
   const [name, setName] = useState("");
   const [desc, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [minBid, setMinBid] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState('fixed');
@@ -92,7 +95,7 @@ const Create = ({ marketplace, nft }) => {
       const listingPrice = ethers.utils.parseEther(price.toString());
       await (await marketplace.makeItem(nft.address, id, listingPrice)).wait();
       // Show success notification
-      toast.success("NFT Listed Successfully!",{
+      toast.success("NFT Listed Successfully!", {
         position: "top-center"
       });
       setIsSuccess(true);
@@ -101,7 +104,7 @@ const Create = ({ marketplace, nft }) => {
       }, 2000); // Display success for 2 seconds before resetting the form
     } catch (error) {
       console.log("Minting/Listing: ", error);
-      toast.error("Failed to list NFT.",{
+      toast.error("Failed to list NFT.", {
         position: "top-center"
       });
       setIsLoading(false);
@@ -114,6 +117,9 @@ const Create = ({ marketplace, nft }) => {
     setName("");
     setDescription("");
     setPrice("");
+    setMinBid("");
+    setStartDate("");
+    setEndDate("");
     setIsLoading(false);
     setIsSuccess(false);
     if (fileInputRef.current) {
@@ -175,9 +181,131 @@ const Create = ({ marketplace, nft }) => {
                   </div>
                 </div>
 
-                <Form.Control onChange={(e) => setName(e.target.value)} size="lg" required type="text" placeholder="Name" value={name} />
-                <Form.Control onChange={(e) => setDescription(e.target.value)} size="lg" required as="textarea" placeholder="Description" value={desc} />
-                <Form.Control onChange={(e) => setPrice(e.target.value)} size="lg" required type="number" placeholder="Price in ETH" value={price} />
+                {selectedMethod === 'fixed' && (
+                  <Form.Control
+                    onChange={(e) => setPrice(e.target.value)}
+                    size="lg"
+                    required
+                    type="number"
+                    placeholder="Price in ETH"
+                    value={price}
+                  />
+                )}
+
+                {selectedMethod === 'auction' && (
+                  <>
+                    <Form.Control
+                      onChange={(e) => setMinBid(e.target.value)}
+                      size="lg"
+                      required
+                      type="number"
+                      placeholder="Minimum Bid in ETH"
+                      value={minBid}
+                    />
+                    <Row>
+                    <div className='flexfordates1'>
+                      <div className='StartingDate1'>                      
+                        <Col>
+                        <Form.Group controlId="startDate">
+                          <Form.Label>Starting Date</Form.Label>
+                          <Form.Control
+                            onChange={(e) => setStartDate(e.target.value)}
+                            size="lg"
+                            required
+                            type="datetime-local"
+                            value={startDate}
+                          />
+                        </Form.Group>
+                      </Col>
+                      </div>
+                      <div className='EndingDate1'>
+                      <Col>
+                        <Form.Group controlId="endDate">
+                          <Form.Label>Ending Date</Form.Label>
+                          <Form.Control
+                            onChange={(e) => setEndDate(e.target.value)}
+                            size="lg"
+                            required
+                            type="datetime-local"
+                            value={endDate}
+                          />
+                        </Form.Group>
+                      </Col>
+                      </div>
+                    </div>
+                    </Row>
+                  </>
+                )}
+
+                {selectedMethod === 'bids' && (
+                  <>
+                    <Form.Control
+                      onChange={(e) => setPrice(e.target.value)}
+                      size="lg"
+                      required
+                      type="number"
+                      placeholder="Price in ETH"
+                      value={price}
+                    />
+                    <Form.Control
+                      onChange={(e) => setMinBid(e.target.value)}
+                      size="lg"
+                      required
+                      type="number"
+                      placeholder="Minimum Bid in ETH"
+                      value={minBid}
+                    />
+                    <Row>
+                    <div className='flexfordates'>
+                      <div className='StartingDate'>                      
+                        <Col>
+                        <Form.Group controlId="startDate">
+                          <Form.Label>Starting Date</Form.Label>
+                          <Form.Control
+                            onChange={(e) => setStartDate(e.target.value)}
+                            size="lg"
+                            required
+                            type="datetime-local"
+                            value={startDate}
+                          />
+                        </Form.Group>
+                      </Col>
+                      </div>
+                      <div className='EndingDate'>
+                      <Col>
+                        <Form.Group controlId="endDate">
+                          <Form.Label>Ending Date</Form.Label>
+                          <Form.Control
+                            onChange={(e) => setEndDate(e.target.value)}
+                            size="lg"
+                            required
+                            type="datetime-local"
+                            value={endDate}
+                          />
+                        </Form.Group>
+                      </Col>
+                      </div>
+                    </div>
+                    </Row>
+                  </>
+                )}
+
+                <Form.Control
+                  onChange={(e) => setName(e.target.value)}
+                  size="lg"
+                  required
+                  type="text"
+                  placeholder="Name"
+                  value={name}
+                />
+                <Form.Control
+                  onChange={(e) => setDescription(e.target.value)}
+                  size="lg"
+                  required
+                  as="textarea"
+                  placeholder="Description"
+                  value={desc}
+                />
                 <div className="d-grid px-0">
                   <Button className="gradient-button" onClick={sendFileToIPFS} size="lg" disabled={isLoading || isSuccess}>
                     {isLoading ? (

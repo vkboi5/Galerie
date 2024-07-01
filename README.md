@@ -19,20 +19,24 @@
 
 ### 2. Install Dependencies:
 ```
-$ cd nft_marketplace
+$ cd Galerie
 $ Please delete the yarn.lock file
-$ Also after deleting Run this command 
-    if yarn then -> yarn cache clean
-    if npm then -> npm cache clean
 ```
 ### 3. Install Dependencies:
 ```
+Also after deleting yarn.lock run this command 
+if yarn 
+$ yarn cache clean
+
+if npm 
+$ npm cache clean
+
 $ npm install or yarn 
 ```
 
 ### 3. Boot up local development blockchain
 ```
-$ cd nft_marketplace
+$ cd Galerie
 $ npx hardhat node
 ```
 
@@ -54,8 +58,3 @@ $ npx hardhat node
 To test as a telegram mini app, install cloudflare extension on VSCode and start it to obtain public accessible URL , use this URL to setup the telegram mini app through
 bot.js file or through botfather.
 Hopefully your telegram mini app should start without any errors!
-
-
-License
-----
-MIT

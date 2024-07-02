@@ -4,6 +4,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { FaHeart } from 'react-icons/fa';
+import Confetti from 'react-dom-confetti';
 import loaderGif from './loader.gif';
 import './Home.css';
 import backgroundImg from './bgfinal.png';
@@ -27,6 +28,7 @@ const HomePage = ({ marketplace, nft }) => {
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
   const [likes, setLikes] = useState({});
+  const [confettiTrigger, setConfettiTrigger] = useState({});
 
   const loadMarketplaceItems = async () => {
     if (!marketplace || !nft) {
@@ -94,6 +96,14 @@ const HomePage = ({ marketplace, nft }) => {
       await marketplace.purchaseItem(item.itemId, { value: item.totalPrice });
       await loadMarketplaceItems();
       toast.success('Item bought successfully!', { position: 'top-center' });
+      
+      // Trigger the confetti effect for the purchased item
+      setConfettiTrigger((prev) => ({ ...prev, [item.itemId]: true }));
+
+      // Reset the confetti trigger after a short duration
+      setTimeout(() => {
+        setConfettiTrigger((prev) => ({ ...prev, [item.itemId]: false }));
+      }, 3000); // 3 seconds duration for confetti
     } catch (error) {
       console.error('Error buying item:', error);
       toast.error('Failed to buy item', { position: 'top-center' });
@@ -133,7 +143,7 @@ const HomePage = ({ marketplace, nft }) => {
             <div className="home-text">
               <h1>Connecting Artists <br /> and Collectors through 
                 <span className='Fonteffect'>
-                 <br/>NFT Innovation
+                <br/> NFT Innovation
                 </span>
               </h1>
               <p>Discover, collect, and trade exclusive NFTs effortlessly!</p>
@@ -202,30 +212,30 @@ const HomePage = ({ marketplace, nft }) => {
               {items.map((item, idx) => (
                 <div key={idx} className="nft-card">
                   <div className="nft-image-container">
+                      <button className="like-button" onClick={() => handleLike(item.itemId)}>
+                        <FaHeart className="like-icon" /> {likes[item.itemId] || 0}
+                      </button>
                     <img src={item.image} alt={item.name} className="nft-card-img" />
                   </div>
                   <div className="nft-card-body">
                     <h3 className="nft-card-title">{item.name}</h3>
-                    <p className="nft-card-text">{item.description}</p>
-                    <div className="nft-card-footer">
-                      <span className="nft-card-price">{ethers.utils.formatEther(item.totalPrice)} ETH</span>
-                      <button onClick={() => buyMarketItem(item)} className="buy-button">
+                    <p className="nft-card-description">{item.description}</p>
+                      <p className="nft-card-price">
+                        {ethers.utils.formatEther(item.totalPrice)} ETH
+                      </p>
+                      <button className="buy-button" onClick={() => buyMarketItem(item)}>
                         Buy
                       </button>
+                    <div className="nft-card-actions">
+                      <Confetti active={confettiTrigger[item.itemId]} />
                     </div>
                   </div>
-                  <button className="like-button" onClick={() => handleLike(item.itemId)}>
-                    <FaHeart className="heart-icon" />
-                    {likes[item.itemId] || 0}
-                  </button>
                 </div>
               ))}
             </div>
           </div>
         ) : (
-          <main style={{ padding: '1rem 0' }}>
-            <h2>No listed assets</h2>
-          </main>
+          <main style={{ padding: '1rem 0', textAlign: 'center' }}>No listed assets</main>
         )}
       </div>
     </div>
@@ -233,3 +243,4 @@ const HomePage = ({ marketplace, nft }) => {
 };
 
 export default HomePage;
+

@@ -5,13 +5,9 @@ import metamaskModule from '@web3-onboard/metamask';
 import walletConnectModule from '@web3-onboard/walletconnect'
 import portisModule from '@web3-onboard/portis'
 import fortmaticModule from '@web3-onboard/fortmatic'
-import torusModule from '@web3-onboard/torus'
 import keystoneModule from '@web3-onboard/keystone'
 import trustModule from '@web3-onboard/trust'
 import infinityWalletModule from '@web3-onboard/infinity-wallet'
-import phantomModule from '@web3-onboard/phantom'
-import venlyModule from '@web3-onboard/venly'
-import bloctoModule from '@web3-onboard/blocto'
 
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -56,21 +52,14 @@ const fortmatic = fortmaticModule({
   apiKey: 'pk_test_886ADCAB855632AA'
 })
 
-const torus = torusModule()
 const infinityWallet = infinityWalletModule()
 
 const keystone = keystoneModule()
 
-const phantom = phantomModule()
 const trust = trustModule()
-const blocto = bloctoModule()
 
-const venly = venlyModule({
-  clientId: 'blocknative',
-  environment: 'staging'
-})
 
-const wallets = [injected, coinbase, metamask,walletConnect, portis, fortmatic, torus, keystone, trust, infinityWallet, phantom, venly, blocto];
+const wallets = [injected, coinbase, metamask,walletConnect, portis, fortmatic, keystone, trust, infinityWallet];
 
 const chains = [{
   id: '0xaa36a7',

@@ -1,10 +1,7 @@
+
+   
 {
   "presets": [
-    "@babel/preset-env",
-    "@babel/preset-react" // if you're using React
-  ],
-  "plugins": [
-    "@babel/plugin-transform-parameters",
-    "@babel/plugin-transform-classes"
+    "@babel/preset-env"
   ]
 }

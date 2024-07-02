@@ -131,7 +131,11 @@ const HomePage = ({ marketplace, nft }) => {
           <ToastContainer />
           <div className="home-content">
             <div className="home-text">
-              <h1>Connecting Artists <br /> and Collectors through NFT Innovation</h1>
+              <h1>Connecting Artists <br /> and Collectors through 
+                <span className='Fonteffect'>
+                 NFT Innovation
+                </span>
+              </h1>
               <p>Discover, collect, and trade exclusive NFTs effortlessly!</p>
               <div className="home-buttons">
                 <button className="explore-button" onClick={handleExploreClick}>Explore</button>

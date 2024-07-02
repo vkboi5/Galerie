@@ -1,5 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
 
+.Fonteffect {
+  -webkit-text-stroke-width: 2px; /* Stroke width for the outline */
+  -webkit-text-stroke-color: #fff; /* Stroke color for the outline */
+  -webkit-text-fill-color: transparent; /* Fill color set to transparent */
+  padding: 4px; /* Padding around the text */
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; /* You can specify a custom font-family */
+  font-size: 48px; /* Adjust font size to match the desired appearance */
+  text-transform: uppercase; /* Optional: Convert text to uppercase */
+  font-weight: bold; /* Optional: Make the text bold */
+}
 
 
 .gradient-section {
@@ -208,9 +218,20 @@
 }
 
 .nft-card-price {
-  color: #ffcc00;
-  font-size: larger;
+  color: #4B0082; /* Deep indigo color for a modern and bold look */
+  font-size: 1.28em; /* Larger font size for emphasis */
+  font-weight: bold; /* Bold text for better visibility */
+  text-align: center; /* Center the text */
+  padding: 5px; /* Padding around the text for spacing */
+  display: inline-block; /* Make the element inline for better spacing */
+  transition: background-color 0.3s, color 0.3s; /* Smooth transition for interactive elements */
+  font-family: "Urbanist", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 15px;
+  font-style: normal;
 }
+
+
 .buy-button {
   background-color: transparent;
   color: #4B0082; /* Dark blue-violet color */

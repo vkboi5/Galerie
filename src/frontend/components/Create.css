@@ -224,3 +224,22 @@ input[type="file"] {
     padding: 0.5rem;
   }
 }
+
+
+.fullscreen-confetti {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none; /* Ensures confetti doesn't interfere with other interactions */
+  z-index: 9999; /* Ensures confetti is on top of other elements */
+}
+
+.show {
+  display: block;
+}
+
+.hide {
+  display: none;
+}

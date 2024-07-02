@@ -133,7 +133,7 @@ const HomePage = ({ marketplace, nft }) => {
             <div className="home-text">
               <h1>Connecting Artists <br /> and Collectors through 
                 <span className='Fonteffect'>
-                 NFT Innovation
+                 <br/>NFT Innovation
                 </span>
               </h1>
               <p>Discover, collect, and trade exclusive NFTs effortlessly!</p>

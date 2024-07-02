@@ -4,6 +4,7 @@ import { ethers } from "ethers";
 import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import { FaTag, FaGavel, FaUsers } from 'react-icons/fa';
+import Confetti from 'react-dom-confetti';
 import 'react-toastify/dist/ReactToastify.css';
 import './Create.css';
 import nftImage from './arebg.png'; // Replace with your image path
@@ -20,6 +21,7 @@ const Create = ({ marketplace, nft }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState('fixed');
+  const [showConfetti, setShowConfetti] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
@@ -99,9 +101,11 @@ const Create = ({ marketplace, nft }) => {
         position: "top-center"
       });
       setIsSuccess(true);
+      setShowConfetti(true); // Show confetti
       setTimeout(() => {
         resetForm();
-      }, 2000); // Display success for 2 seconds before resetting the form
+        setShowConfetti(false); // Hide confetti after some time
+      }, 5000); // Display success for 5 seconds before resetting the form and hiding confetti
     } catch (error) {
       console.log("Minting/Listing: ", error);
       toast.error("Failed to list NFT.", {
@@ -125,6 +129,19 @@ const Create = ({ marketplace, nft }) => {
     if (fileInputRef.current) {
       fileInputRef.current.value = null;
     }
+  };
+
+  const confettiConfig = {
+    angle: 90,
+    spread: 360,
+    startVelocity: 40,
+    elementCount: 79,
+    dragFriction: 0.12,
+    duration: 3000,
+    stagger: 3,
+    width: "10px",
+    height: "10px",
+    colors: ["#a864fd", "#29cdff", "#78ff44", "#ff718d", "#fdff6a"]
   };
 
   return (
@@ -203,36 +220,36 @@ const Create = ({ marketplace, nft }) => {
                       value={minBid}
                     />
                     <Row>
-                    <div className='flexfordates1'>
-                      <div className='StartingDate1'>                      
-                        <Col>
-                        <Form.Group controlId="startDate">
-                          <Form.Label>Starting Date</Form.Label>
-                          <Form.Control
-                            onChange={(e) => setStartDate(e.target.value)}
-                            size="lg"
-                            required
-                            type="datetime-local"
-                            value={startDate}
-                          />
-                        </Form.Group>
-                      </Col>
+                      <div className='flexfordates1'>
+                        <div className='StartingDate1'>
+                          <Col>
+                            <Form.Group controlId="startDate">
+                              <Form.Label>Starting Date</Form.Label>
+                              <Form.Control
+                                onChange={(e) => setStartDate(e.target.value)}
+                                size="lg"
+                                required
+                                type="datetime-local"
+                                value={startDate}
+                              />
+                            </Form.Group>
+                          </Col>
+                        </div>
+                        <div className='EndingDate1'>
+                          <Col>
+                            <Form.Group controlId="endDate">
+                              <Form.Label>Ending Date</Form.Label>
+                              <Form.Control
+                                onChange={(e) => setEndDate(e.target.value)}
+                                size="lg"
+                                required
+                                type="datetime-local"
+                                value={endDate}
+                              />
+                            </Form.Group>
+                          </Col>
+                        </div>
                       </div>
-                      <div className='EndingDate1'>
-                      <Col>
-                        <Form.Group controlId="endDate">
-                          <Form.Label>Ending Date</Form.Label>
-                          <Form.Control
-                            onChange={(e) => setEndDate(e.target.value)}
-                            size="lg"
-                            required
-                            type="datetime-local"
-                            value={endDate}
-                          />
-                        </Form.Group>
-                      </Col>
-                      </div>
-                    </div>
                     </Row>
                   </>
                 )}
@@ -256,36 +273,36 @@ const Create = ({ marketplace, nft }) => {
                       value={minBid}
                     />
                     <Row>
-                    <div className='flexfordates'>
-                      <div className='StartingDate'>                      
-                        <Col>
-                        <Form.Group controlId="startDate">
-                          <Form.Label>Starting Date</Form.Label>
-                          <Form.Control
-                            onChange={(e) => setStartDate(e.target.value)}
-                            size="lg"
-                            required
-                            type="datetime-local"
-                            value={startDate}
-                          />
-                        </Form.Group>
-                      </Col>
+                      <div className='flexfordates'>
+                        <div className='StartingDate'>
+                          <Col>
+                            <Form.Group controlId="startDate">
+                              <Form.Label>Starting Date</Form.Label>
+                              <Form.Control
+                                onChange={(e) => setStartDate(e.target.value)}
+                                size="lg"
+                                required
+                                type="datetime-local"
+                                value={startDate}
+                              />
+                            </Form.Group>
+                          </Col>
+                        </div>
+                        <div className='EndingDate'>
+                          <Col>
+                            <Form.Group controlId="endDate">
+                              <Form.Label>Ending Date</Form.Label>
+                              <Form.Control
+                                onChange={(e) => setEndDate(e.target.value)}
+                                size="lg"
+                                required
+                                type="datetime-local"
+                                value={endDate}
+                              />
+                            </Form.Group>
+                          </Col>
+                        </div>
                       </div>
-                      <div className='EndingDate'>
-                      <Col>
-                        <Form.Group controlId="endDate">
-                          <Form.Label>Ending Date</Form.Label>
-                          <Form.Control
-                            onChange={(e) => setEndDate(e.target.value)}
-                            size="lg"
-                            required
-                            type="datetime-local"
-                            value={endDate}
-                          />
-                        </Form.Group>
-                      </Col>
-                      </div>
-                    </div>
                     </Row>
                   </>
                 )}
@@ -321,6 +338,9 @@ const Create = ({ marketplace, nft }) => {
             </div>
           </main>
         </div>
+      </div>
+      <div className={`fullscreen-confetti ${showConfetti ? 'show' : 'hide'}`}>
+        <Confetti active={showConfetti} config={confettiConfig} />
       </div>
     </div>
   );

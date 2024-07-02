@@ -9,10 +9,6 @@ html, body {
 
 /* Container */
 .container-fluid {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 50px); /* Assuming navbar height is 50px */
   padding-top: 50px; /* Adjust based on the actual navbar height */
 }
 
@@ -24,12 +20,10 @@ html, body {
   background: white;
   border-radius: 20px;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-  margin-left: auto; /* Move container to the right */
-  margin-right: 9rem; 
-  margin-top:-5rem;
-  transform: translateX(20%);/* Add some right margin for spacing */
+  margin: 0 auto; /* Center the content */
+  margin-right: 50px !important;
+  margin-top: -50px !important;
 }
-
 
 /* Form Control */
 form .form-control {
@@ -39,6 +33,7 @@ form .form-control {
   padding: 1rem;
   margin-bottom: 1rem;
   color: #333;
+  
   font-size: 1rem;
   transition: border-color 0.3s;
 }
@@ -113,7 +108,8 @@ input[type="file"] {
 
 .method-options {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap; /* Ensure options wrap on smaller screens */
+  gap: 1rem;
 }
 
 .method-option {
@@ -124,7 +120,7 @@ input[type="file"] {
   border-radius: 10px;
   cursor: pointer;
   flex-grow: 1;
-  margin-right: 1rem;
+  margin-bottom: 1rem; /* Add space between options */
   transition: background-color 0.3s, border-color 0.3s;
 }
 
@@ -146,6 +142,33 @@ input[type="file"] {
   fill: white;
 }
 
+.image-container img{
+  width: 550px;
+  height: 600px;
+  margin-top: -70px;
+  margin-left: -25px;
+  animation: slideIn 1s ease-out, floatAnimation 2s ease-in-out infinite;
+}
+
+/* Keyframes for Animation */
+@keyframes slideIn {
+  0% {
+    transform: translateX(-100%); /* Start off-screen to the left */
+  }
+  100% {
+    transform: translateX(0); /* End at original position */
+  }
+}
+
+/* Keyframes for Floating Animation */
+@keyframes floatAnimation {
+  0%, 100% {
+    transform: translateY(0); /* Start and end position */
+  }
+  50% {
+    transform: translateY(-10px); /* Middle position */
+  }
+}
 /* Button Styles */
 .gradient-button {
   background: linear-gradient(90deg, #6200ea 0%, #4b00b5 100%);
@@ -168,28 +191,36 @@ input[type="file"] {
   cursor: not-allowed;
 }
 
-.flexfordates{
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .content {
+    padding: 1rem;
+  }
+
+  .col-lg-3 {
+    display: none; /* Hide the image container on smaller screens */
+  }
+
+  .col-lg-9 {
+    flex: 1; /* Take full width on smaller screens */
+  }
+
+  .method-options {
+    flex-direction: column; /* Stack method options vertically on smaller screens */
+  }
 }
 
-.StartingDate {
-  margin-top: 14px;
-}
-.EndingDate {
-  margin-top: 14px;
-}
+@media (max-width: 576px) {
+  .content {
+    max-width: 100%;
+    margin: 0 auto;
+  }
 
-.flexfordates1{
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;  
-}
+  .method-option {
+    margin-right: 0;
+  }
 
-.StartingDate1{
-  margin-top: 14px;
-}
-.EndingDate1{
-  margin-top: 14px;
+  .upload-container {
+    padding: 0.5rem;
+  }
 }

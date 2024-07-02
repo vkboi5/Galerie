@@ -1,48 +1,52 @@
-import { useState, useEffect } from 'react'
-import { ethers } from "ethers"
-import { Row, Col, Card } from 'react-bootstrap'
+import { useState, useEffect } from 'react';
+import { ethers } from "ethers";
+import { Row, Col, Card } from 'react-bootstrap';
 import loaderGif from './loader.gif';
 
 export default function MyPurchases({ marketplace, nft, account }) {
-  const [loading, setLoading] = useState(true)
-  const [purchases, setPurchases] = useState([])
+  const [loading, setLoading] = useState(true);
+  const [purchases, setPurchases] = useState([]);
+  
   const loadPurchasedItems = async () => {
-    // Fetch purchased items from marketplace by quering Offered events with the buyer set as the user
-    const filter =  marketplace.filters.Bought(null,null,null,null,null,account)
-    const results = await marketplace.queryFilter(filter)
-    //Fetch metadata of each nft and add that to listedItem object.
-    const purchases = await Promise.all(results.map(async i => {
-      // fetch arguments from each result
-      i = i.args
-      // get uri url from nft contract
-      const uri = await nft.tokenURI(i.tokenId)
-      // use uri to fetch the nft metadata stored on ipfs 
-      const response = await fetch(uri)
-      const metadata = await response.json()
-      // get total price of item (item price + fee)
-      const totalPrice = await marketplace.getTotalPrice(i.itemId)
-      // define listed item object
-      let purchasedItem = {
-        totalPrice,
-        price: i.price,
-        itemId: i.itemId,
-        name: metadata.name,
-        description: metadata.description,
-        image: metadata.image
-      }
-      return purchasedItem
-    }))
-    setLoading(false)
-    setPurchases(purchases)
-  }
+    try {
+      const filter = marketplace.filters.Bought(null, null, null, null, null, account);
+      const results = await marketplace.queryFilter(filter);
+      const purchases = await Promise.all(results.map(async i => {
+        i = i.args;
+        const uri = await nft.tokenURI(i.tokenId);
+        const response = await fetch(uri);
+        const metadata = await response.json();
+        const totalPrice = await marketplace.getTotalPrice(i.itemId);
+        let purchasedItem = {
+          totalPrice,
+          price: i.price,
+          itemId: i.itemId,
+          name: metadata.name,
+          description: metadata.description,
+          image: metadata.image
+        };
+        return purchasedItem;
+      }));
+      setLoading(false);
+      setPurchases(purchases);
+    } catch (error) {
+      console.error("Error loading purchased items: ", error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    loadPurchasedItems()
-  }, [])
+    if (account && marketplace && nft) {
+      loadPurchasedItems();
+    }
+  }, [account, marketplace, nft]);
+
   if (loading) return (
     <main style={{ padding: "1rem 0", textAlign: 'center' }}>
       <img src={loaderGif} alt="Loading..." style={{ width: '100px', height: '100px' }} />
     </main>
   );
+
   return (
     <div className="flex justify-center">
       {purchases.length > 0 ?

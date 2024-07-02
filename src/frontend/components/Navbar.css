@@ -1,101 +1,109 @@
-/* General styling for the navbar */
 .custom-navbar {
-    /*
-    * Created with https://www.css-gradient.com
-    * Gradient link: https://www.css-gradient.com/?c1=a41c84&c2=4637b8&gt=l&gd=dcr
-    */
     background: #A41C84 !important;
     background: linear-gradient(270deg, #A41C84, #4637B8) !important;
-        font-family: 'Roboto', sans-serif;
+    font-family: 'Roboto', sans-serif;
+    position: relative;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.logo-img {
+    margin-right: 10px;
+    height: 45px; /* Adjust logo height */
+    width: 150px; /* Maintain aspect ratio */
+}
+
+.nav-link {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #ffffff;
+    transition: color 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+    color: #f0f0f0;
+}
+
+.nav-button {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #ffffff;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-button button {
+    border: 2px solid #ffffff;
+    background: transparent;
+    padding: 5px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-button button:hover {
+    background: #ffffff;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.connect-wallet-button {
+    margin-right: 15px;
+}
+
+.connect-wallet-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+@media (max-width: 992px) {
+    .custom-navbar {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
     }
-    
+
+    .navbar-toggler {
+        order: 3;
+        margin-left: 10px; /* Add space between the button and the toggler */
+    }
+
+    .connect-wallet-wrapper {
+        order: 2;
+        margin-right: 15px;
+    }
+
     .navbar-brand {
-        display: flex;
-        align-items: center;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #ffffff;
+        order: 1;
+    }
+
+    .navbar-collapse {
+        order: 4;
+        width: 100%;
     }
     
-    .navbar-brand img {
-        margin-right: 10px;
+    .navbar-toggler-icon {
+        order: 2; /* Ensure the menu icon is beside the connect wallet button */
     }
-    
+}
+
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+
     .nav-link {
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: #ffffff;
-        transition: color 0.3s ease-in-out;
+        font-size: 0.9rem;
     }
-    
-    .nav-link:hover {
-        color: #f0f0f0;
+
+    .connect-wallet-button {
+        margin-bottom: 0;
     }
-    
-    .nav-button {
-        display: flex;
-        align-items: center;
-        font-size: 1rem;
-        font-weight: 500;
-        color: #ffffff;
-        transition: all 0.3s ease-in-out;
-    }
-    
-    .nav-button button {
-        border: 2px solid #ffffff;
-        background: transparent;
-        padding: 5px 15px;
-        border-radius: 5px;
-        transition: all 0.3s ease-in-out;
-    }
-    
-    .nav-button button:hover {
-        background: #ffffff;
-        color: #667eea;
-        border: 2px solid #667eea;
-    }
-    
-    @media (max-width: 992px) {
-        .navbar-brand {
-            font-size: 1.3rem;
-        }
-    
-        .nav-link {
-            font-size: 1rem;
-        }
-    
-        .nav-button {
-            margin-top: 10px;
-        }
-    
-        .nav-button button {
-            width: 100%;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .navbar-brand {
-            font-size: 1.2rem;
-        }
-    
-        .nav-link {
-            font-size: 0.9rem;
-        }
-    
-        .nav-button button {
-            padding: 5px 10px;
-        }
-    }
-    
-    .navbar-brand img {
-        height: 45px;
-        width: 150px; /* Adjust the height of the logo */
-    }
-    
-    .wallet-button-container {
-        display: flex;
-        justify-content: center;
-        padding: 10px 20px;
-        background: linear-gradient(270deg, #A41C84, #4637B8) !important; 
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);   
-    }
+}

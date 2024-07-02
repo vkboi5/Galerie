@@ -29,6 +29,11 @@ const HomePage = ({ marketplace, nft }) => {
   const [likes, setLikes] = useState({});
 
   const loadMarketplaceItems = async () => {
+    if (!marketplace || !nft) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const itemCount = await marketplace.itemCount();
       let fetchedItems = [];
@@ -110,18 +115,10 @@ const HomePage = ({ marketplace, nft }) => {
   useEffect(() => {
     localStorage.setItem('likes', JSON.stringify(likes));
   }, [likes]);
-  
+
   useEffect(() => {
     loadMarketplaceItems();
-  }, [selectedFilter, sortOrder]);
-
-  if (loading) {
-    return (
-      <main style={{ padding: '1rem 0', textAlign: 'center' }}>
-        <img src={loaderGif} alt="Loading..." style={{ width: '100px', height: '100px' }} />
-      </main>
-    );
-  }
+  }, [selectedFilter, sortOrder, marketplace, nft]);
 
   return (
     <div>
@@ -134,7 +131,7 @@ const HomePage = ({ marketplace, nft }) => {
           <ToastContainer />
           <div className="home-content">
             <div className="home-text">
-              <h1>Connecting Artists <br/> and Collectors through NFT Innovation</h1>
+              <h1>Connecting Artists <br /> and Collectors through NFT Innovation</h1>
               <p>Discover, collect, and trade exclusive NFTs effortlessly!</p>
               <div className="home-buttons">
                 <button className="explore-button" onClick={handleExploreClick}>Explore</button>
@@ -191,7 +188,11 @@ const HomePage = ({ marketplace, nft }) => {
             </div>
           </div>
         </div>
-        {items.length > 0 ? (
+        {loading ? (
+          <main style={{ padding: '1rem 0', textAlign: 'center' }}>
+            <img src={loaderGif} alt="Loading..." style={{ width: '100px', height: '100px' }} />
+          </main>
+        ) : items.length > 0 ? (
           <div ref={nftCardSectionRef} className="NftCardContainer">
             <div className="grid">
               {items.map((item, idx) => (

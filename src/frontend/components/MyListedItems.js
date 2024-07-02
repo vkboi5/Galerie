@@ -24,36 +24,43 @@ export default function MyListedItems({ marketplace, nft, account }) {
   const [soldItems, setSoldItems] = useState([]);
   
   const loadListedItems = async () => {
-    const itemCount = await marketplace.itemCount();
-    let listedItems = [];
-    let soldItems = [];
-    for (let indx = 1; indx <= itemCount; indx++) {
-      const i = await marketplace.items(indx);
-      if (i.seller.toLowerCase() === account) {
-        const uri = await nft.tokenURI(i.tokenId);
-        const response = await fetch(uri);
-        const metadata = await response.json();
-        const totalPrice = await marketplace.getTotalPrice(i.itemId);
-        let item = {
-          totalPrice,
-          price: i.price,
-          itemId: i.itemId,
-          name: metadata.name,
-          description: metadata.description,
-          image: metadata.image
-        };
-        listedItems.push(item);
-        if (i.sold) soldItems.push(item);
+    try {
+      const itemCount = await marketplace.itemCount();
+      let listedItems = [];
+      let soldItems = [];
+      for (let indx = 1; indx <= itemCount; indx++) {
+        const i = await marketplace.items(indx);
+        if (i.seller.toLowerCase() === account) {
+          const uri = await nft.tokenURI(i.tokenId);
+          const response = await fetch(uri);
+          const metadata = await response.json();
+          const totalPrice = await marketplace.getTotalPrice(i.itemId);
+          let item = {
+            totalPrice,
+            price: i.price,
+            itemId: i.itemId,
+            name: metadata.name,
+            description: metadata.description,
+            image: metadata.image
+          };
+          listedItems.push(item);
+          if (i.sold) soldItems.push(item);
+        }
       }
+      setLoading(false);
+      setListedItems(listedItems);
+      setSoldItems(soldItems);
+    } catch (error) {
+      console.error("Error loading listed items: ", error);
+      setLoading(false);
     }
-    setLoading(false);
-    setListedItems(listedItems);
-    setSoldItems(soldItems);
   };
 
   useEffect(() => {
-    loadListedItems();
-  }, []);
+    if (account && marketplace && nft) {
+      loadListedItems();
+    }
+  }, [account, marketplace, nft]);
 
   if (loading) return (
     <main style={{ padding: "1rem 0", textAlign: 'center' }}>

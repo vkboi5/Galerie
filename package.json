@@ -62,7 +62,8 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test",
+    "postinstall": "npm install @babel/plugin-transform-parameters @babel/plugin-transform-classes"
   },
   "eslintConfig": {
     "extends": [

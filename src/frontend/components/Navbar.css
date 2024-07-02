@@ -3,6 +3,10 @@
     background: linear-gradient(270deg, #A41C84, #4637B8) !important;
     font-family: 'Roboto', sans-serif;
     position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
 }
 
 .navbar-brand {
@@ -64,33 +68,15 @@
 
 @media (max-width: 992px) {
     .custom-navbar {
-        display: flex;
         flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .navbar-toggler {
-        order: 3;
-        margin-left: 10px; /* Add space between the button and the toggler */
     }
 
     .connect-wallet-wrapper {
-        order: 2;
-        margin-right: 15px;
-    }
-
-    .navbar-brand {
-        order: 1;
+        margin-left: auto;
     }
 
     .navbar-collapse {
-        order: 4;
         width: 100%;
-    }
-    
-    .navbar-toggler-icon {
-        order: 2; /* Ensure the menu icon is beside the connect wallet button */
     }
 }
 
@@ -103,7 +89,21 @@
         font-size: 0.9rem;
     }
 
-    .connect-wallet-button {
-        margin-bottom: 0;
+    .connect-wallet-wrapper {
+        margin-right: 10px;
+    }
+}
+
+@media (max-width: 441px) {
+    .custom-navbar {
+        padding: 0 5px;
+    }
+
+    .navbar-toggler {
+        margin-left: 5px;
+    }
+
+    .navbar-collapse {
+        width: 100%;
     }
 }

@@ -94,7 +94,7 @@
     }
 }
 
-@media (max-width: 441px) {
+@media (max-width: 420px) {
     .custom-navbar {
         padding: 0 5px;
     }

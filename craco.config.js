@@ -5,10 +5,7 @@ module.exports = {
     configure: {
       resolve: {
         fallback: {
-          path: require.resolve('path-browserify'),
-          "http": false,
-          "https": false,
-          "zlib": false
+          path: require.resolve('path-browserify')
         },
         alias: {
           assert: 'assert',

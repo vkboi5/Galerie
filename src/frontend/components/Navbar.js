@@ -17,7 +17,7 @@ const Navigation = ({ web3Handler, account }) => {
     return (
         <Navbar expand="lg" bg="secondary" variant="dark" className="custom-navbar">
             <Navbar.Brand as={Link} to="/">
-                <img src={logo} width="100" height="40" className="logo-img" alt="Logo" />
+                <img src={logo} className="logo-img" alt="Logo" />
             </Navbar.Brand>
             <div className="connect-wallet-wrapper">
                 {account && (

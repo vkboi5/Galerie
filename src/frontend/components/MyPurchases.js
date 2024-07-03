@@ -63,7 +63,7 @@ export default function MyPurchases({ marketplace, nft, account }) {
           </Row>
         </div>
         : (
-          <main style={{ padding: "1rem 0" }}>
+          <main style={{ padding: "1rem 0", fontFamily :"Montserrat,sans-serif", fontWeight:"700" }}>
             <h2>No purchases</h2>
           </main>
         )}

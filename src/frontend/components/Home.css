@@ -225,9 +225,9 @@
   padding: 5px; /* Padding around the text for spacing */
   display: inline-block; /* Make the element inline for better spacing */
   transition: background-color 0.3s, color 0.3s; /* Smooth transition for interactive elements */
-  font-family: "Urbanist", sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-optical-sizing: auto;
-  font-weight: 15px;
+  font-weight: 700px;
   font-style: normal;
 }
 
@@ -429,4 +429,10 @@
   left: 50%;
   transform: translateX(-50%);
   pointer-events: none; /* Ensures confetti doesn't interfere with button clicks */
+}
+
+.section-title-today{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  margin-bottom: 1rem;
 }

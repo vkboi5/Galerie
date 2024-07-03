@@ -3,10 +3,11 @@
     background: linear-gradient(270deg, #A41C84, #4637B8) !important;
     font-family: 'Roboto', sans-serif;
     position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 15px;
+}
+
+.me-auto{
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
 }
 
 .navbar-brand {
@@ -38,7 +39,8 @@
     display: flex;
     align-items: center;
     font-size: 1rem;
-    font-weight: 500;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
     color: #ffffff;
     transition: all 0.3s ease-in-out;
 }
@@ -58,7 +60,10 @@
 }
 
 .connect-wallet-button {
-    margin-right: 15px;
+    margin-right: 15px;    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
 }
 
 .connect-wallet-wrapper {
@@ -68,15 +73,33 @@
 
 @media (max-width: 992px) {
     .custom-navbar {
+        display: flex;
         flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        order: 3;
+        margin-left: 10px; /* Add space between the button and the toggler */
     }
 
     .connect-wallet-wrapper {
-        margin-left: auto;
+        order: 2;
+        margin-right: 15px;
+    }
+
+    .navbar-brand {
+        order: 1;
     }
 
     .navbar-collapse {
+        order: 4;
         width: 100%;
+    }
+    
+    .navbar-toggler-icon {
+        order: 2; /* Ensure the menu icon is beside the connect wallet button */
     }
 }
 
@@ -89,28 +112,7 @@
         font-size: 0.9rem;
     }
 
-    .connect-wallet-wrapper {
-        margin-right: 10px;
-    }
-}
-
-@media (max-width: 400px) {
-    .custom-navbar {
-        padding: 0 5px;
-    }
-
-    .navbar-toggler {
-        margin-left: 5px;
-    }
-
-    .navbar-collapse {
-        width: 100%;
-    }
-
-    .logo-img{
-        height: 45px; /* Adjust logo height */
-        width: 130px;
-        margin-right: 3px;  
-        margin-left: 5px;
+    .connect-wallet-button {
+        margin-bottom: 0;
     }
 }

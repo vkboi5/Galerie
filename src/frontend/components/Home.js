@@ -141,7 +141,7 @@ const HomePage = ({ marketplace, nft }) => {
           <ToastContainer />
           <div className="home-content">
             <div className="home-text">
-              <h1>Connecting Artists <br /> and Collectors through 
+              <h1>Connecting Artists <br /> and Collectors <br />through 
                 <span className='Fonteffect'>
                 <br/> NFT Innovation
                 </span>
@@ -160,7 +160,7 @@ const HomePage = ({ marketplace, nft }) => {
       </div>
       <div className="white-section">
         <div className="filters">
-          <h2>Today's Picks</h2>
+          <h2 className='section-title-today'>Today's Picks</h2>
           <div className="filter-options">
             <div className="filter-dropdown">
               <button className="filter-button" onClick={() => setSelectedFilter('price')}>

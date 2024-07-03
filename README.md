@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # NFT Marketplace
 ## Technology Stack & Tools
 - Solidity (Writing Smart Contract)
@@ -43,10 +42,7 @@ $ npx hardhat node
 `$ npm run start`
 
 License
-----
-MIT
 
 =======
-# Galarie
-Galarie, is a NFT Blockchain based online marketplace for artisans
->>>>>>> 44b466689c17cceedc50a3e18951dd6eb328cd68
+# Galerie
+Galerie, is a NFT Blockchain based online marketplace for artisans

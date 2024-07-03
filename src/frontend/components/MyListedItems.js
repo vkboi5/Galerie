@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from "ethers";
+import Popup from 'reactjs-popup';
+import { FaTimes, FaWhatsapp, FaTwitter, FaFacebook, FaLinkedin, FaPinterest } from 'react-icons/fa';
 import './MyListedItems.css';
 import loaderGif from './loader.gif';  // Ensure the path to the loader gif is correct
 
@@ -27,7 +29,7 @@ export default function MyListedItems({ marketplace, nft, account }) {
   const [loading, setLoading] = useState(true);
   const [listedItems, setListedItems] = useState([]);
   const [soldItems, setSoldItems] = useState([]);
-  
+
   // Function to load listed items from the marketplace
   const loadListedItems = async () => {
     try {
@@ -69,6 +71,32 @@ export default function MyListedItems({ marketplace, nft, account }) {
     }
   }, [account, marketplace, nft]);
 
+  // Function to handle sharing
+  const handleShare = (item, platform) => {
+    const shareUrl = item.image; // Using the image URL directly
+    let url = '';
+    switch (platform) {
+      case 'whatsapp':
+        url = `https://api.whatsapp.com/send?text=${encodeURIComponent(`Check out this NFT: ${item.name}\n${shareUrl}`)}`;
+        break;
+      case 'twitter':
+        url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out this NFT: ${item.name}`)}`;
+        break;
+      case 'facebook':
+        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`;
+        break;
+      case 'linkedin':
+        url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+        break;
+      case 'pinterest':
+        url = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(shareUrl)}&media=${encodeURIComponent(shareUrl)}&description=${encodeURIComponent(item.name)}`;
+        break;
+      default:
+        break;
+    }
+    window.open(url, '_blank');
+  };
+
   // Loading state rendering
   if (loading) return (
     <main style={{ padding: "1rem 0", textAlign: 'center' }}>
@@ -91,6 +119,39 @@ export default function MyListedItems({ marketplace, nft, account }) {
                     <span className="card-text">
                       {ethers.utils.formatEther(item.totalPrice)} ETH
                     </span>
+                    <Popup
+                      trigger={<button className="share-button">Share</button>}
+                      position="center center"
+                      closeOnDocumentClick
+                      contentStyle={{ padding: '0', border: 'none', width: '100%', height: '100%' }}
+                      overlayStyle={{ background: 'rgba(0, 0, 0, 0.5)' }}
+                    >
+                      {close => (
+                        <div className="share-popup-container">
+                          <div className="share-popup">
+                            <FaTimes className="close-icon" onClick={close} />
+                            <h3>Share on Social Media</h3>
+                            <div className="share-options">
+                              <button onClick={() => handleShare(item, 'whatsapp')}>
+                                <FaWhatsapp size={32} style={{ color: '#25D366' }} /><span>WhatsApp</span>
+                              </button>
+                              <button onClick={() => handleShare(item, 'twitter')}>
+                                <FaTwitter size={32} style={{ color: '#1DA1F2' }} /><span>Twitter</span>
+                              </button>
+                              <button onClick={() => handleShare(item, 'facebook')}>
+                                <FaFacebook size={32} style={{ color: '#1877F2' }} /><span>Facebook</span>
+                              </button>
+                              <button onClick={() => handleShare(item, 'linkedin')}>
+                                <FaLinkedin size={32} style={{ color: '#0077B5' }} /><span>LinkedIn</span>
+                              </button>
+                              <button onClick={() => handleShare(item, 'pinterest')}>
+                                <FaPinterest size={32} style={{ color: '#E60023' }} /><span>Pinterest</span>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </Popup>
                   </div>
                 </div>
               ))}

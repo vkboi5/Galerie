@@ -44,21 +44,17 @@
   background: #F4F4F9;
   border-radius: 15px;
   padding: 1rem;
-  box-shadow: -8px -8px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  box-shadow: -8px -8px 8px rgba(0, 0, 0, 0.1), 8px 8px 16px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  position: relative;
+  transition: transform 0.3s;
+  position: relative; /* Position relative to place share button correctly */
 }
 
 .card-custom:hover {
-  transform: translateY(-10px);
+  transform: translateY(-5px);
 }
 
 .card-img {
-  flex: 1 0 auto;
   width: 100%;
   height: 300px;
   object-fit: cover;
@@ -102,70 +98,117 @@
   background-color: #0056b3;
 }
 
-/* Responsive adjustments */
-@media screen and (max-width: 768px) {
-  .containerListedItems {
-    padding: 1rem;
-  }
-  
-  .section-title-listed,
-  .section-title-sold {
-    font-size: 1.5rem;
-    padding: 1.5rem;
-    width: 90%;
-  }
-
-  .card-custom {
-    max-width: 20rem;
-    padding: 1rem;
-  }
-
-  .card-img {
-    height: 18rem;
-  }
-
-  .card-footer-custom {
-    margin-top: 0.5rem;
-  }
-
-  .card-text {
-    margin: 1rem 0;
-  }
+/* Sold card styling */
+.sold-card {
+  opacity: 0.6;
 }
 
-@media screen and (max-width: 576px) {
-  .section-title-listed,
-  .section-title-sold {
-    font-size: 1.2rem;
-    padding: 1rem;
-    width: 95%;
-  }
-
-  .card-custom {
-    max-width: 100%;
-    padding: 1rem;
-  }
-  
-  .card-img {
-    height: 16rem;
-  }
-  
-  .card-footer-custom {
-    margin-top: 0.5rem;
-  }
-  
-  .card-text {
-    font-size: 1.2rem;
-    margin: 0.5rem 0;
-  }
-  
-  .buy-button button {
-    font-size: 1.4rem;
-    padding: 0.5rem 1rem;
-  }
+.sold-card:hover {
+  transform: none;
 }
 
-.section-title{
+/* Share button styling */
+.share-button {
+  background-color: rgb(75, 0, 130); /* Violet shade */
+  color: #fff;
+  border: none;
+  border-radius: 30px; /* Rounded sides */
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  transition: background 0.3s;
+  opacity: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  visibility: hidden;
   font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
+  font-size:large; /* Modern font */
+}
+
+.card-custom:hover .share-button {
+  opacity: 1;
+  visibility: visible;
+}
+
+.share-button:hover {
+  background-color: rgba(75, 0, 130, 0.7); /* Slightly darker violet */
+}
+
+/* Share popup styling */
+.share-popup-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999; /* Ensure popup is on top */
+}
+
+.share-popup {
+  background: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+}
+
+.share-popup h3 {
+  margin-bottom: 3rem;
+  color: #333;
+  font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.share-popup .close-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 10000; /* Ensure close icon is on top */
+}
+
+.share-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 1rem;
+  text-align: center;
+}
+
+.share-options button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.share-options span {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* Social media icons original colors */
+.share-options button .fa-whatsapp { color: #25D366 !important; }
+.share-options button .fa-twitter { color: #1DA1F2 !important; }
+.share-options button .fa-facebook { color: #1877F2 !important; }
+.share-options button .fa-linkedin { color: #0077B5 !important; }
+.share-options button .fa-pinterest { color: #E60023 !important; }
+
+/* Additional styling */
+.blur-background {
+  filter: blur(5px);
+}
+
+/* Disable scrolling when popup is open */
+.no-scroll {
+  overflow: hidden;
 }

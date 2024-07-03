@@ -179,16 +179,30 @@ input[type="file"] {
   font-size: 1.2rem;
   cursor: pointer;
   transition: background 0.3s;
+  background-size: 200% 200%;
 }
 
 .gradient-button:hover {
-  background: linear-gradient(90deg, #4b00b5 0%, #6200ea 100%);
+  animation: gradient-flow 3s ease infinite;
 }
 
 .gradient-button:disabled {
   background: #ddd;
   color: #aaa;
   cursor: not-allowed;
+}
+
+/* Keyframes for Gradient Animation */
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Responsive Adjustments */
@@ -224,7 +238,6 @@ input[type="file"] {
     padding: 0.5rem;
   }
 }
-
 
 .fullscreen-confetti {
   position: fixed;

@@ -32,6 +32,15 @@ if npm
 $ npm cache clean
 
 $ npm install or yarn 
+
+//if you face installing problems 
+execute,  $yarn add --force  or $npm install --force
+if that didn't work, try
+$yarn add --legacy-peer-deps or $npm install --legacy-peer-deps
+
+//if you face network issues
+execute,  $yarn install --network-timeout 1000000
+          
 ```
 
 ### 3. Boot up local development blockchain
@@ -57,4 +66,15 @@ $ npx hardhat node
 
 To test as a telegram mini app, install cloudflare extension on VSCode and start it to obtain public accessible URL , use this URL to setup the telegram mini app through
 bot.js file or through botfather.
-Hopefully your telegram mini app should start without any errors!
+
+Also we have deployed our smart contracts on sepolia testnet so
+the marketplace and other functionalities would work on this testnet or on default hardhat network.
+
+Hopefully your telegram mini app should start without any errors! 
+
+Check out our telegram mini app: [https](https://t.me/Galeries_Telegram_Mini_App_Bot) 
+//If you are accessing app through telegram please note that sometimes connecting to wallet and making transactions will be
+tough and time-consuming , so patience is a key here!
+
+Watch Step-by-Step Tutorial Video:https://drive.google.com/drive/u/0/mobile/folders/19tcZjHNz3QY9lKXSrqGEa3N8MBXoesuo?usp=sharing
+

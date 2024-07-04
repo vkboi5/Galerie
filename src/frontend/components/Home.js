@@ -56,6 +56,7 @@ const HomePage = ({ marketplace, nft }) => {
               totalPrice,
               itemId: item.itemId,
               seller: item.seller,
+              creator: metadata.creator,  // Fetch creator address from metadata
               name: metadata.name,
               description: metadata.description,
               image: metadata.image,
@@ -129,6 +130,11 @@ const HomePage = ({ marketplace, nft }) => {
   useEffect(() => {
     loadMarketplaceItems();
   }, [selectedFilter, sortOrder, marketplace, nft]);
+
+  const formatWalletAddress = (address) => {
+    if (!address) return '';
+    return `${address.slice(0, 5)}***${address.slice(-4)}`;
+  };
 
   return (
     <div>
@@ -212,20 +218,21 @@ const HomePage = ({ marketplace, nft }) => {
               {items.map((item, idx) => (
                 <div key={idx} className="nft-card">
                   <div className="nft-image-container">
-                      <button className="like-button" onClick={() => handleLike(item.itemId)}>
-                        <FaHeart className="like-icon" /> {likes[item.itemId] || 0}
-                      </button>
+                    <button className="like-button" onClick={() => handleLike(item.itemId)}>
+                      <FaHeart className="like-icon" /> {likes[item.itemId] || 0}
+                    </button>
                     <img src={item.image} alt={item.name} className="nft-card-img" />
                   </div>
                   <div className="nft-card-body">
                     <h3 className="nft-card-title">{item.name}</h3>
                     <p className="nft-card-description">{item.description}</p>
-                      <p className="nft-card-price">
-                        {ethers.utils.formatEther(item.totalPrice)} ETH
-                      </p>
-                      <button className="buy-button" onClick={() => buyMarketItem(item)}>
-                        Buy
-                      </button>
+                    <p className="nft-card-creator">Created By: {formatWalletAddress(item.creator)}</p> {/* Display formatted creator address */}
+                    <p className="nft-card-price">
+                      {ethers.utils.formatEther(item.totalPrice)} ETH
+                    </p>
+                    <button className="buy-button" onClick={() => buyMarketItem(item)}>
+                      Buy
+                    </button>
                     <div className="nft-card-actions">
                       <Confetti active={confettiTrigger[item.itemId]} />
                     </div>
@@ -243,4 +250,3 @@ const HomePage = ({ marketplace, nft }) => {
 };
 
 export default HomePage;
-

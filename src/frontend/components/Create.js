@@ -30,7 +30,7 @@ const Create = ({ marketplace, nft }) => {
     setFileName(file ? file.name : "");
   };
 
-  const sendJSONtoIPFS = async (ImgHash) => {
+  const sendJSONtoIPFS = async (ImgHash, walletAddress) => {
     try {
       const resJSON = await axios({
         method: "post",
@@ -38,7 +38,8 @@ const Create = ({ marketplace, nft }) => {
         data: {
           name,
           description: desc,
-          image: ImgHash
+          image: ImgHash,
+          creator: walletAddress
         },
         headers: {
           pinata_api_key: process.env.REACT_APP_PINATA_API_KEY,
@@ -48,7 +49,7 @@ const Create = ({ marketplace, nft }) => {
 
       const tokenURI = `https://gateway.pinata.cloud/ipfs/${resJSON.data.IpfsHash}`;
       console.log("Token URI", tokenURI);
-      mintThenList(tokenURI);
+      mintThenList(tokenURI, walletAddress);
     } catch (error) {
       console.log("JSON to IPFS: ", error);
       setIsLoading(false);
@@ -77,7 +78,12 @@ const Create = ({ marketplace, nft }) => {
 
         const ImgHash = `https://gateway.pinata.cloud/ipfs/${resFile.data.IpfsHash}`;
         console.log(ImgHash);
-        sendJSONtoIPFS(ImgHash);
+
+        // Get the user's wallet address
+        const signer = nft.signer;
+        const walletAddress = await signer.getAddress();
+
+        sendJSONtoIPFS(ImgHash, walletAddress);
       } catch (error) {
         console.log("File to IPFS: ", error);
         setIsLoading(false);
@@ -85,7 +91,7 @@ const Create = ({ marketplace, nft }) => {
     }
   };
 
-  const mintThenList = async (uri) => {
+  const mintThenList = async (uri, walletAddress) => {
     try {
       // mint nft
       await (await nft.mint(uri)).wait();

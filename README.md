@@ -1,4 +1,3 @@
-# NFT Marketplace
 # Web3 based Digital MarketPlace for Artisans and Collectors
 
 ## Technology Stack & Tools

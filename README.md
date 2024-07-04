@@ -41,9 +41,9 @@ $yarn add --legacy-peer-deps or $npm install --legacy-peer-deps
 execute,  $yarn install --network-timeout 1000000
           
 ```
-### 4. Set up Environment Varible 
+### 4. Set up Environment Varibles 
 ```
-Create a ev file .env which will look like this:
+Create a ev file .env , which will look like this:
 
 REACT_APP_PINATA_API_KEY = 432a7605d4c8w9euisjwfji
 REACT_APP_PINATA_SECRET_API_KEY = b5184aa54e3c9ec622acdfcd284woijiwgra1a2fd4930d276e581

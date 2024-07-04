@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ethers } from 'ethers';
+import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +9,8 @@ import Confetti from 'react-dom-confetti';
 import loaderGif from './loader.gif';
 import './Home.css';
 import backgroundImg from './bgfinal.png';
+
+const PINATA_BASE_URL = 'https://api.pinata.cloud';
 
 const HomePage = ({ marketplace, nft }) => {
   const navigate = useNavigate();
@@ -28,7 +31,51 @@ const HomePage = ({ marketplace, nft }) => {
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [sortOrder, setSortOrder] = useState(null);
   const [likes, setLikes] = useState({});
+  const [likedItems, setLikedItems] = useState({});
   const [confettiTrigger, setConfettiTrigger] = useState({});
+
+  const loadLikesFromPinata = async (itemId) => {
+    try {
+      const response = await axios.get(`${PINATA_BASE_URL}/data/pinList?status=pinned&metadata[keyvalues][itemId]={"value": "${itemId}", "op": "eq"}`, {
+        headers: {
+          pinata_api_key: process.env.REACT_APP_PINATA_API_KEY,
+          pinata_secret_api_key: process.env.REACT_APP_PINATA_SECRET_API_KEY
+        }
+      });
+
+      const pinataItems = response.data.rows;
+      if (pinataItems.length > 0) {
+        const metadata = pinataItems[0].metadata.keyvalues;
+        return metadata.likes ? parseInt(metadata.likes) : 0;
+      }
+    } catch (error) {
+      console.error('Error loading likes from Pinata:', error);
+    }
+    return 0;
+  };
+
+  const updateLikesOnPinata = async (itemId, likes) => {
+    try {
+      const metadata = {
+        name: `likes-${itemId}`,
+        keyvalues: {
+          itemId: itemId,
+          likes: likes.toString()
+        }
+      };
+
+      const response = await axios.post(`${PINATA_BASE_URL}/pinning/pinJSONToIPFS`, metadata, {
+        headers: {
+          pinata_api_key: process.env.REACT_APP_PINATA_API_KEY,
+          pinata_secret_api_key: process.env.REACT_APP_PINATA_SECRET_API_KEY
+        }
+      });
+
+      return response.data.IpfsHash;
+    } catch (error) {
+      console.error('Error updating likes on Pinata:', error);
+    }
+  };
 
   const loadMarketplaceItems = async () => {
     if (!marketplace || !nft) {
@@ -51,6 +98,7 @@ const HomePage = ({ marketplace, nft }) => {
             }
             const metadata = await response.json();
             const totalPrice = await marketplace.getTotalPrice(item.itemId);
+            const likes = await loadLikesFromPinata(item.itemId);
 
             fetchedItems.push({
               totalPrice,
@@ -61,7 +109,8 @@ const HomePage = ({ marketplace, nft }) => {
               description: metadata.description,
               image: metadata.image,
               category: metadata.category,
-              saleType: metadata.saleType
+              saleType: metadata.saleType,
+              likes: likes
             });
           } catch (fetchError) {
             console.error(`Error fetching metadata for item ${item.tokenId}:`, fetchError);
@@ -97,7 +146,7 @@ const HomePage = ({ marketplace, nft }) => {
       await marketplace.purchaseItem(item.itemId, { value: item.totalPrice });
       await loadMarketplaceItems();
       toast.success('Item bought successfully!', { position: 'top-center' });
-      
+
       // Trigger the confetti effect for the purchased item
       setConfettiTrigger((prev) => ({ ...prev, [item.itemId]: true }));
 
@@ -111,21 +160,34 @@ const HomePage = ({ marketplace, nft }) => {
     }
   };
 
-  const handleLike = (itemId) => {
+  const handleLike = async (itemId) => {
+    const currentLikes = likes[itemId] || 0;
+    const userHasLiked = likedItems[itemId] || false;
+
+    const newLikes = userHasLiked ? currentLikes - 1 : currentLikes + 1;
     setLikes((prevLikes) => ({
       ...prevLikes,
-      [itemId]: (prevLikes[itemId] || 0) + 1
+      [itemId]: newLikes
     }));
+    setLikedItems((prevLikedItems) => ({
+      ...prevLikedItems,
+      [itemId]: !userHasLiked
+    }));
+
+    await updateLikesOnPinata(itemId, newLikes);
   };
 
   useEffect(() => {
     const storedLikes = JSON.parse(localStorage.getItem('likes')) || {};
+    const storedLikedItems = JSON.parse(localStorage.getItem('likedItems')) || {};
     setLikes(storedLikes);
+    setLikedItems(storedLikedItems);
   }, []);
 
   useEffect(() => {
     localStorage.setItem('likes', JSON.stringify(likes));
-  }, [likes]);
+    localStorage.setItem('likedItems', JSON.stringify(likedItems));
+  }, [likes, likedItems]);
 
   useEffect(() => {
     loadMarketplaceItems();
@@ -147,9 +209,9 @@ const HomePage = ({ marketplace, nft }) => {
           <ToastContainer />
           <div className="home-content">
             <div className="home-text">
-              <h1>Connecting Artists <br /> and Collectors <br />through 
+              <h1>Connecting Artists <br /> and Collectors <br />through
                 <span className='Fonteffect'>
-                <br/> NFT Innovation
+                <br /> NFT Innovation
                 </span>
               </h1>
               <p>Discover, collect, and trade exclusive NFTs effortlessly!</p>
@@ -219,7 +281,7 @@ const HomePage = ({ marketplace, nft }) => {
                 <div key={idx} className="nft-card">
                   <div className="nft-image-container">
                     <button className="like-button" onClick={() => handleLike(item.itemId)}>
-                      <FaHeart className="like-icon" /> {likes[item.itemId] || 0}
+                      <FaHeart className="like-icon" style={{ color: likedItems[item.itemId] ? 'red' : 'white' }} /> {likes[item.itemId] || 0}
                     </button>
                     <img src={item.image} alt={item.name} className="nft-card-img" />
                   </div>

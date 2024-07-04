@@ -72,7 +72,7 @@ the marketplace and other functionalities would work on this testnet or on defau
 
 Hopefully your telegram mini app should start without any errors! 
 
-Check out our telegram mini app: [https](https://t.me/Galeries_Telegram_Mini_App_Bot) 
+Check out our telegram mini app: [Click here!](https://t.me/Galeries_Telegram_Mini_App_Bot) 
 //If you are accessing app through telegram please note that sometimes connecting to wallet and making transactions will be
 tough and time-consuming , so patience is a key here!
 

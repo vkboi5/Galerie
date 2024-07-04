@@ -1,4 +1,4 @@
-# Web3 based Digital MarketPlace for Artisans and Collectors
+# Web3 based Digital NFT MarketPlace for Artisans and Collectors
 
 ## Technology Stack & Tools
 - Solidity (Writing Smart Contract)
@@ -19,11 +19,11 @@
 ### 2. Install Dependencies:
 ```
 $ cd Galerie
-$ Please delete the yarn.lock file
+// Please delete the yarn.lock file
 ```
 ### 3. Install Dependencies:
 ```
-Also after deleting yarn.lock run this command 
+// Also after deleting yarn.lock run this command 
 if yarn 
 $ yarn cache clean
 

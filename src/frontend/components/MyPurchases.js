@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ethers } from "ethers";
-import { Row, Col, Card } from 'react-bootstrap';
 import loaderGif from './loader.gif';
+import './MyPurchases.css';
 
 export default function MyPurchases({ marketplace, nft, account }) {
   const [loading, setLoading] = useState(true);
@@ -48,22 +48,20 @@ export default function MyPurchases({ marketplace, nft, account }) {
   );
 
   return (
-    <div className="flex justify-center">
+    <div>
       {purchases.length > 0 ?
-        <div className="px-5 container">
-          <Row xs={1} md={2} lg={4} className="g-4 py-5">
-            {purchases.map((item, idx) => (
-              <Col key={idx} className="overflow-hidden">
-                <Card>
-                  <Card.Img variant="top" src={item.image} />
-                  <Card.Footer>{ethers.utils.formatEther(item.totalPrice)} ETH</Card.Footer>
-                </Card>
-              </Col>
-            ))}
-          </Row>
+        <div className="gridpurchase">
+          {purchases.map((item, idx) => (
+            <div key={idx} className="card-custom-purchase">
+              <img src={item.image} alt={item.name} className="card-img-purchase" />
+              <div className="card-footer-custom-purchase">
+                <span className="card-text-purchase">{ethers.utils.formatEther(item.totalPrice)} ETH</span>
+              </div>
+            </div>
+          ))}
         </div>
         : (
-          <main style={{ padding: "1rem 0", fontFamily :"Montserrat,sans-serif", fontWeight:"700" }}>
+          <main className="section-title-no-purchase">
             <h2>No purchases</h2>
           </main>
         )}

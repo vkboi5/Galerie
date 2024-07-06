@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from "ethers";
 import Popup from 'reactjs-popup';
-import { FaTimes, FaWhatsapp, FaTwitter, FaFacebook, FaLinkedin, FaPinterest } from 'react-icons/fa';
+import { FaTimes, FaWhatsapp, FaTwitter, FaFacebook, FaLinkedin, FaPinterest, FaTimesCircle, FaShareAlt } from 'react-icons/fa';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './MyListedItems.css';
 import loaderGif from './loader.gif';  // Ensure the path to the loader gif is correct
 
@@ -29,11 +31,13 @@ export default function MyListedItems({ marketplace, nft, account }) {
   const [loading, setLoading] = useState(true);
   const [listedItems, setListedItems] = useState([]);
   const [soldItems, setSoldItems] = useState([]);
+  const [itemToDelete, setItemToDelete] = useState(null); // State to hold the item to delete
 
   // Function to load listed items from the marketplace
   const loadListedItems = async () => {
     try {
       const itemCount = await marketplace.itemCount();
+      const auctionCount = await marketplace.auctionCount();
       let listedItems = [];
       let soldItems = [];
       for (let indx = 1; indx <= itemCount; indx++) {
@@ -49,10 +53,31 @@ export default function MyListedItems({ marketplace, nft, account }) {
             itemId: i.itemId,
             name: metadata.name,
             description: metadata.description,
-            image: metadata.image
+            image: metadata.image,
+            saleType: 'Fixed Price'
           };
           listedItems.push(item);
           if (i.sold) soldItems.push(item);
+        }
+      }
+      for (let indx = 1; indx <= auctionCount; indx++) {
+        const i = await marketplace.auctions(indx);
+        if (i.seller.toLowerCase() === account.toLowerCase()) {
+          const uri = await nft.tokenURI(i.tokenId);
+          const response = await fetch(uri);
+          const metadata = await response.json();
+          const totalPrice = await marketplace.getTotalPrice(i.auctionId); // Fetch total price for auction
+          let item = {
+            auctionId: i.auctionId,
+            totalPrice, // Use total price for rendering
+            itemId: i.tokenId,
+            name: metadata.name,
+            description: metadata.description,
+            image: metadata.image,
+            saleType: 'Auction'
+          };
+          listedItems.push(item);
+          if (i.ended) soldItems.push(item);
         }
       }
       setLoading(false);
@@ -61,6 +86,23 @@ export default function MyListedItems({ marketplace, nft, account }) {
     } catch (error) {
       console.error("Error loading listed items: ", error);
       setLoading(false);
+    }
+  };
+
+  const deleteItem = async (item) => {
+    try {
+      // Call the marketplace contract to delete the item
+      await marketplace.removeItem(item.itemId);
+      // Reload the listed items
+      loadListedItems();
+      // Close the delete confirmation popup
+      setItemToDelete(null);
+      // Show toast notification
+      toast.success('Item Deleted Successfully!', {
+        position: "top-center"
+      });
+    } catch (error) {
+      console.error("Error deleting item: ", error);
     }
   };
 
@@ -107,6 +149,7 @@ export default function MyListedItems({ marketplace, nft, account }) {
   // Main content rendering
   return (
     <div className="flex justify-center">
+      <ToastContainer />
       {listedItems.length > 0 ? (
         <div className="containerListedItems">
           <div className="section-title-listed">
@@ -119,8 +162,13 @@ export default function MyListedItems({ marketplace, nft, account }) {
                     <span className="card-text">
                       {ethers.utils.formatEther(item.totalPrice)} ETH
                     </span>
+                    <FaTimesCircle 
+                      className="delete-icon" 
+                      size={24} 
+                      onClick={() => setItemToDelete(item)} // Set the item to delete when icon is clicked
+                    />
                     <Popup
-                      trigger={<button className="share-button">Share</button>}
+                      trigger={<button className="share-button"><FaShareAlt size={16} style={{ marginRight: '8px' }} /> Share</button>}
                       position="center center"
                       closeOnDocumentClick
                       contentStyle={{ padding: '0', border: 'none', width: '100%', height: '100%' }}
@@ -163,6 +211,24 @@ export default function MyListedItems({ marketplace, nft, account }) {
         <main style={{ padding: "1rem 0" }}>
           <h2 className="section-title">No listed assets</h2>
         </main>
+      )}
+      {itemToDelete && (
+        <Popup
+          open={true}
+          closeOnDocumentClick
+          onClose={() => setItemToDelete(null)}
+          contentStyle={{ padding: '0', border: 'none', width: '300px', textAlign: 'center' }}
+          overlayStyle={{ background: 'rgba(0, 0, 0, 0.5)' }}
+        >
+          <div className="delete-confirmation-popup">
+            <h3>Delete Item</h3>
+            <p>Are you sure you want to delete this item?</p>
+            <div className="popup-buttons">
+              <button className="confirm-button" onClick={() => deleteItem(itemToDelete)}>Delete</button>
+              <button className="cancel-button" onClick={() => setItemToDelete(null)}>Cancel</button>
+            </div>
+          </div>
+        </Popup>
       )}
     </div>
   );

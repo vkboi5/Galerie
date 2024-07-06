@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ethers } from "ethers";
 import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
@@ -22,12 +22,69 @@ const Create = ({ marketplace, nft }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState('fixed');
   const [showConfetti, setShowConfetti] = useState(false);
+  const [isNameValid, setIsNameValid] = useState(true);
+  const [isPriceValid, setIsPriceValid] = useState(true);
+  const [isFileValid, setIsFileValid] = useState(true);
+  const [isMinBidValid, setIsMinBidValid] = useState(true);
+  const [isStartDateValid, setIsStartDateValid] = useState(true);
+  const [isEndDateValid, setIsEndDateValid] = useState(true);
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFile(file);
     setFileName(file ? file.name : "");
+    setIsFileValid(true);
+  };
+
+  useEffect(() => {
+    setIsNameValid(true);
+    setIsPriceValid(true);
+    setIsFileValid(true);
+    setIsMinBidValid(true);
+    setIsStartDateValid(true);
+    setIsEndDateValid(true);
+  }, []);
+
+  const validateForm = () => {
+    let isValid = true;
+
+    if (!name) {
+      setIsNameValid(false);
+      isValid = false;
+    }
+
+    if (!fileImg) {
+      setIsFileValid(false);
+      isValid = false;
+    }
+
+    if (selectedMethod === 'fixed' && !price) {
+      setIsPriceValid(false);
+      isValid = false;
+    }
+
+    if ((selectedMethod === 'auction' || selectedMethod === 'bids') && !minBid) {
+      setIsMinBidValid(false);
+      isValid = false;
+    }
+
+    if ((selectedMethod === 'auction' || selectedMethod === 'bids') && !startDate) {
+      setIsStartDateValid(false);
+      isValid = false;
+    }
+
+    if ((selectedMethod === 'auction' || selectedMethod === 'bids') && !endDate) {
+      setIsEndDateValid(false);
+      isValid = false;
+    }
+
+    if (selectedMethod === 'bids' && !price) {
+      setIsPriceValid(false);
+      isValid = false;
+    }
+
+    return isValid;
   };
 
   const sendJSONtoIPFS = async (ImgHash, walletAddress) => {
@@ -59,6 +116,30 @@ const Create = ({ marketplace, nft }) => {
   const sendFileToIPFS = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
+    // Validation check
+    if (!name || !fileImg || (selectedMethod === 'fixed' && !price) ||
+        (selectedMethod === 'auction' && (!minBid || !startDate || !endDate)) ||
+        (selectedMethod === 'bids' && (!price || !minBid || !startDate || !endDate))) {
+      
+      setIsNameValid(!!name);
+      setIsFileValid(!!fileImg);
+      if (selectedMethod === 'fixed') {
+        setIsPriceValid(!!price);
+      } else if (selectedMethod === 'auction' || selectedMethod === 'bids') {
+        setIsMinBidValid(!!minBid);
+        setIsStartDateValid(!!startDate);
+        setIsEndDateValid(!!endDate);
+        if (selectedMethod === 'bids') {
+          setIsPriceValid(!!price);
+        }
+      }
+      toast.error("Please fill in all required fields!", {
+        position: "top-center"
+      });
+      setIsLoading(false);
+      return;
+    }
 
     if (fileImg) {
       try {
@@ -99,13 +180,33 @@ const Create = ({ marketplace, nft }) => {
       const id = await nft.tokenCount();
       // approve marketplace to spend nft
       await (await nft.setApprovalForAll(marketplace.address, true)).wait();
-      // add nft to marketplace
-      const listingPrice = ethers.utils.parseEther(price.toString());
-      await (await marketplace.makeItem(nft.address, id, listingPrice)).wait();
-      // Show success notification
-      toast.success("NFT Listed Successfully!", {
-        position: "top-center"
-      });
+
+      if (selectedMethod === 'fixed') {
+        // add nft to marketplace as fixed price item
+        const listingPrice = ethers.utils.parseEther(price.toString());
+        await (await marketplace.makeItem(nft.address, id, listingPrice)).wait();
+        // Show success notification
+        toast.success("NFT Listed Successfully!", {
+          position: "top-center"
+        });
+      } else if (selectedMethod === 'auction') {
+        // add nft to marketplace as auction item
+        const auctionDuration = Math.floor((new Date(endDate).getTime() - new Date().getTime()) / 1000);
+        await (await marketplace.createAuction(nft.address, id, auctionDuration)).wait();
+        // Show success notification
+        toast.success("NFT Auction Created Successfully!", {
+          position: "top-center"
+        });
+      } else if (selectedMethod === 'bids') {
+        // add nft to marketplace as bids item
+        const auctionDuration = Math.floor((new Date(endDate).getTime() - new Date().getTime()) / 1000);
+        await (await marketplace.createAuction(nft.address, id, auctionDuration)).wait();
+        // Show success notification
+        toast.success("NFT Bids Created Successfully!", {
+          position: "top-center"
+        });
+      }
+
       setIsSuccess(true);
       setShowConfetti(true); // Show confetti
       setTimeout(() => {
@@ -163,183 +264,164 @@ const Create = ({ marketplace, nft }) => {
           <main role="main" className="mx-auto" style={{ maxWidth: '1000px' }}>
             <div className="content mx-auto">
               <Row className="g-4">
-                <div className="upload-container">
-                  <label htmlFor="file-upload" className="custom-file-upload">
-                    Upload file
-                  </label>
-                  <span>{fileName || "PNG, JPG, GIF, WEBP or MP4. Max 200mb."}</span>
-                  <input
-                    id="file-upload"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    type="file"
-                  />
-                </div>
-
-                {/* Select Method Section */}
-                <div className="method-selection">
-                  <label>Select method</label>
-                  <div className="method-options">
-                    <div
-                      className={`method-option ${selectedMethod === 'fixed' ? 'selected' : ''}`}
-                      onClick={() => setSelectedMethod('fixed')}
-                    >
-                      <FaTag />
-                      <span>Fixed Price</span>
+                <Form onSubmit={sendFileToIPFS}>
+                  <Form.Group controlId="formFile" className="mb-3">
+                    <div className="upload-container">
+                      <label htmlFor="file-upload" className="custom-file-upload">
+                        Upload file
+                      </label>
+                      <span>{fileName || "PNG, JPG, GIF, WEBP or MP4. Max 200mb."}</span>
+                      <input
+                        id="file-upload"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        type="file"
+                        className={`form-control ${!isFileValid ? 'is-invalid' : ''}`}
+                      />
+                      <div className="invalid-feedback">
+                        Please upload an image.
+                      </div>
                     </div>
-                    <div
-                      className={`method-option ${selectedMethod === 'auction' ? 'selected' : ''}`}
-                      onClick={() => setSelectedMethod('auction')}
-                    >
-                      <FaGavel />
-                      <span>Time Auctions</span>
-                    </div>
-                    <div
-                      className={`method-option ${selectedMethod === 'bids' ? 'selected' : ''}`}
-                      onClick={() => setSelectedMethod('bids')}
-                    >
-                      <FaUsers />
-                      <span>Open For Bids</span>
+                  </Form.Group>
+  
+                  {/* Select Method Section */}
+                  <div className="method-selection mb-3">
+                    <Form.Label>Select method</Form.Label>
+                    <div className="method-options d-flex">
+                      <button
+                        type="button"
+                        className={`me-2 method-option ${selectedMethod === 'fixed' ? 'selected' : ''}`}
+                        onClick={() => setSelectedMethod('fixed')}
+                      >
+                        <FaTag /> Fixed Price
+                      </button>
+                      <button
+                        type="button"
+                        className={`me-2 method-option ${selectedMethod === 'auction' ? 'selected' : ''}`}
+                        onClick={() => setSelectedMethod('auction')}
+                      >
+                        <FaGavel /> Time Auctions
+                      </button>
+                      <button
+                        type="button"
+                        className={`me-2 method-option ${selectedMethod === 'bids' ? 'selected' : ''}`}
+                        onClick={() => setSelectedMethod('bids')}
+                      >
+                        <FaUsers /> Open For Bids
+                      </button>
                     </div>
                   </div>
-                </div>
-
-                {selectedMethod === 'fixed' && (
-                  <Form.Control
-                    onChange={(e) => setPrice(e.target.value)}
-                    size="lg"
-                    required
-                    type="number"
-                    placeholder="Price in ETH"
-                    value={price}
-                  />
-                )}
-
-                {selectedMethod === 'auction' && (
-                  <>
-                    <Form.Control
-                      onChange={(e) => setMinBid(e.target.value)}
-                      size="lg"
-                      required
-                      type="number"
-                      placeholder="Minimum Bid in ETH"
-                      value={minBid}
-                    />
-                    <Row>
-                      <div className='flexfordates1'>
-                        <div className='StartingDate1'>
-                          <Col>
-                            <Form.Group controlId="startDate">
-                              <Form.Label>Starting Date</Form.Label>
-                              <Form.Control
-                                onChange={(e) => setStartDate(e.target.value)}
-                                size="lg"
-                                required
-                                type="datetime-local"
-                                value={startDate}
-                              />
-                            </Form.Group>
-                          </Col>
-                        </div>
-                        <div className='EndingDate1'>
-                          <Col>
-                            <Form.Group controlId="endDate">
-                              <Form.Label>Ending Date</Form.Label>
-                              <Form.Control
-                                onChange={(e) => setEndDate(e.target.value)}
-                                size="lg"
-                                required
-                                type="datetime-local"
-                                value={endDate}
-                              />
-                            </Form.Group>
-                          </Col>
-                        </div>
+  
+                  {selectedMethod === 'fixed' && (
+                    <Form.Group controlId="formPrice" className="mb-3">
+                      <Form.Control
+                        type="text"
+                        placeholder="Enter price in ETH"
+                        value={price}
+                        onChange={(e) => setPrice(e.target.value)}
+                        className={`form-control ${!isPriceValid ? 'is-invalid' : ''}`}
+                      />
+                      <div className="invalid-feedback">
+                        Please enter a valid price.
                       </div>
-                    </Row>
-                  </>
-                )}
-
-                {selectedMethod === 'bids' && (
-                  <>
-                    <Form.Control
-                      onChange={(e) => setPrice(e.target.value)}
-                      size="lg"
-                      required
-                      type="number"
-                      placeholder="Price in ETH"
-                      value={price}
-                    />
-                    <Form.Control
-                      onChange={(e) => setMinBid(e.target.value)}
-                      size="lg"
-                      required
-                      type="number"
-                      placeholder="Minimum Bid in ETH"
-                      value={minBid}
-                    />
-                    <Row>
-                      <div className='flexfordates'>
-                        <div className='StartingDate'>
-                          <Col>
-                            <Form.Group controlId="startDate">
-                              <Form.Label>Starting Date</Form.Label>
-                              <Form.Control
-                                onChange={(e) => setStartDate(e.target.value)}
-                                size="lg"
-                                required
-                                type="datetime-local"
-                                value={startDate}
-                              />
-                            </Form.Group>
-                          </Col>
+                    </Form.Group>
+                  )}
+  
+                  {(selectedMethod === 'auction' || selectedMethod === 'bids') && (
+                    <>
+                      {selectedMethod === 'bids' && (
+                        <Form.Group controlId="formPrice" className="mb-3">
+                          <Form.Control
+                            type="text"
+                            placeholder="Enter price in ETH"
+                            value={price}
+                            onChange={(e) => setPrice(e.target.value)}
+                            className={`form-control ${!isPriceValid ? 'is-invalid' : ''}`}
+                          />
+                          <div className="invalid-feedback">
+                            Please enter a valid price.
+                          </div>
+                        </Form.Group>
+                      )}
+                      <Form.Group controlId="formMinBid" className="mb-3">
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter minimum bid in ETH"
+                          value={minBid}
+                          onChange={(e) => setMinBid(e.target.value)}
+                          className={`form-control ${!isMinBidValid ? 'is-invalid' : ''}`}
+                        />
+                        <div className="invalid-feedback">
+                          Please enter a valid minimum bid.
                         </div>
-                        <div className='EndingDate'>
-                          <Col>
-                            <Form.Group controlId="endDate">
-                              <Form.Label>Ending Date</Form.Label>
-                              <Form.Control
-                                onChange={(e) => setEndDate(e.target.value)}
-                                size="lg"
-                                required
-                                type="datetime-local"
-                                value={endDate}
-                              />
-                            </Form.Group>
-                          </Col>
-                        </div>
-                      </div>
-                    </Row>
-                  </>
-                )}
-
-                <Form.Control
-                  onChange={(e) => setName(e.target.value)}
-                  size="lg"
-                  required
-                  type="text"
-                  placeholder="Name"
-                  value={name}
-                />
-                <Form.Control
-                  onChange={(e) => setDescription(e.target.value)}
-                  size="lg"
-                  required
-                  as="textarea"
-                  placeholder="Description"
-                  value={desc}
-                />
-                <div className="d-grid px-0">
-                  <Button className="gradient-button" onClick={sendFileToIPFS} size="lg" disabled={isLoading || isSuccess}>
-                    {isLoading ? (
-                      <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                    ) : isSuccess ? (
-                      <span>&#10003; NFT Listed Successfully!</span>
-                    ) : (
-                      'Create & List NFT!'
-                    )}
-                  </Button>
-                </div>
+                      </Form.Group>
+                      <Row>
+                        <Col md={6}>
+                          <Form.Group controlId="formStartDate" className="mb-3">
+                            <Form.Label>Start Date</Form.Label>
+                            <Form.Control
+                              type="datetime-local"
+                              value={startDate}
+                              onChange={(e) => setStartDate(e.target.value)}
+                              className={`form-control ${!isStartDateValid ? 'is-invalid' : ''}`}
+                            />
+                            <div className="invalid-feedback">
+                              Please enter a valid start date.
+                            </div>
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group controlId="formEndDate" className="mb-3">
+                            <Form.Label>End Date</Form.Label>
+                            <Form.Control
+                              type="datetime-local"
+                              value={endDate}
+                              onChange={(e) => setEndDate(e.target.value)}
+                              className={`form-control ${!isEndDateValid ? 'is-invalid' : ''}`}
+                            />
+                            <div className="invalid-feedback">
+                              Please enter a valid end date.
+                            </div>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                    </>
+                  )}
+  
+                  <Form.Group controlId="formName" className="mb-3">
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className={`form-control ${!isNameValid ? 'is-invalid' : ''}`}
+                    />
+                    <div className="invalid-feedback">
+                      Please enter a name.
+                    </div>
+                  </Form.Group>
+                  <Form.Group controlId="formDescription" className="mb-3">
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      placeholder="Enter description"
+                      value={desc}
+                      onChange={(e) => setDescription(e.target.value)}
+                      className="form-control"
+                    />
+                  </Form.Group>
+                  <div className="d-grid px-0">
+                    <Button className="gradient-button" type="submit" size="lg" disabled={isLoading || isSuccess}>
+                      {isLoading ? (
+                        <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                      ) : isSuccess ? (
+                        <span>&#10003; NFT Listed Successfully!</span>
+                      ) : (
+                        'Create & List NFT!'
+                      )}
+                    </Button>
+                  </div>
+                </Form>
               </Row>
             </div>
           </main>
@@ -351,5 +433,4 @@ const Create = ({ marketplace, nft }) => {
     </div>
   );
 };
-
-export default Create;
+export default Create;  

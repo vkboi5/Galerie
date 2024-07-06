@@ -4,10 +4,12 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-import { FaHeart } from 'react-icons/fa';
+import noAssetsGif from './crying.gif';
+import { FaHeart,FaTimes } from 'react-icons/fa';
 import Confetti from 'react-dom-confetti';
 import loaderGif from './loader.gif';
 import './Home.css';
+import Popup from 'reactjs-popup';
 import backgroundImg from './bgfinal.png';
 
 const PINATA_BASE_URL = 'https://api.pinata.cloud';
@@ -33,6 +35,13 @@ const HomePage = ({ marketplace, nft }) => {
   const [likes, setLikes] = useState({});
   const [likedItems, setLikedItems] = useState({});
   const [confettiTrigger, setConfettiTrigger] = useState({});
+  const [bidAmounts, setBidAmounts] = useState({}); 
+  const [userBids, setUserBids] = useState({}); // Track user bids
+  const [timeRemaining, setTimeRemaining] = useState({});
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [currentBidItem, setCurrentBidItem] = useState(null);
+  const [popupBidAmount, setPopupBidAmount] = useState('');
 
   const loadLikesFromPinata = async (itemId) => {
     try {
@@ -85,17 +94,22 @@ const HomePage = ({ marketplace, nft }) => {
 
     try {
       const itemCount = await marketplace.itemCount();
+      const auctionCount = await marketplace.auctionCount();
       let fetchedItems = [];
 
       for (let i = 1; i <= itemCount.toNumber(); i++) {
         const item = await marketplace.items(i);
         if (!item.sold) {
-          const uri = await nft.tokenURI(item.tokenId);
+          const tokenId = item.tokenId;
+
           try {
+            const uri = await nft.tokenURI(tokenId);
             const response = await fetch(uri);
+
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
+
             const metadata = await response.json();
             const totalPrice = await marketplace.getTotalPrice(item.itemId);
             const likes = await loadLikesFromPinata(item.itemId);
@@ -104,17 +118,51 @@ const HomePage = ({ marketplace, nft }) => {
               totalPrice,
               itemId: item.itemId,
               seller: item.seller,
-              creator: metadata.creator,  // Fetch creator address from metadata
+              creator: metadata.creator,
               name: metadata.name,
               description: metadata.description,
               image: metadata.image,
               category: metadata.category,
-              saleType: metadata.saleType,
+              saleType: 'Fixed Price',
               likes: likes
             });
           } catch (fetchError) {
-            console.error(`Error fetching metadata for item ${item.tokenId}:`, fetchError);
-            toast.error(`Failed to fetch metadata for item ${item.tokenId}`, { position: 'top-center' });
+            console.error(`Error fetching metadata for item ${tokenId}:`, fetchError);
+          }
+        }
+      }
+
+      for (let i = 1; i <= auctionCount.toNumber(); i++) {
+        const auction = await marketplace.auctions(i);
+        if (!auction.ended) {
+          const tokenId = auction.tokenId;
+
+          try {
+            const uri = await nft.tokenURI(tokenId);
+            const response = await fetch(uri);
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const metadata = await response.json();
+            const likes = await loadLikesFromPinata(auction.auctionId);
+
+            fetchedItems.push({
+              auctionId: auction.auctionId,
+              seller: auction.seller,
+              creator: metadata.creator,
+              name: metadata.name,
+              description: metadata.description,
+              image: metadata.image,
+              category: metadata.category,
+              saleType: 'Timed Auction',
+              auctionEnd: new Date(auction.endTime * 1000),
+              highestBid: auction.highestBid,
+              likes: likes
+            });
+          } catch (fetchError) {
+            console.error(`Error fetching metadata for auction ${tokenId}:`, fetchError);
           }
         }
       }
@@ -127,18 +175,20 @@ const HomePage = ({ marketplace, nft }) => {
         } else if (sortOrder === 'lowToHigh') {
           sortedItems.sort((a, b) => a.totalPrice - b.totalPrice);
         }
-      } else if (selectedFilter === 'category') {
-        // Implement category filtering logic if needed
-      } else if (selectedFilter === 'saleType') {
-        // Implement sale type filtering logic if needed
       }
 
       setItems(sortedItems);
       setLoading(false);
     } catch (error) {
       console.error('Error loading marketplace items:', error);
-      toast.error('Failed to load marketplace items', { position: 'top-center' });
+      setLoading(false);
     }
+  };
+
+  const handleOpenPopup = (item) => {
+    setCurrentBidItem(item);
+    setPopupBidAmount('');
+    setIsPopupOpen(true);
   };
 
   const buyMarketItem = async (item) => {
@@ -177,6 +227,45 @@ const HomePage = ({ marketplace, nft }) => {
     await updateLikesOnPinata(itemId, newLikes);
   };
 
+  const handlePlaceBid = async () => {
+    const item = currentBidItem;
+    const bidAmount = ethers.utils.parseEther(popupBidAmount);
+
+    if (userBids[item.auctionId] && bidAmount <= userBids[item.auctionId]) {
+      toast.error('Bid must be higher than the current bid');
+      return;
+    }
+
+    if (bidAmount <= item.highestBid) {
+      toast.error('Bid must be higher than the current highest bid');
+      return;
+    }
+
+    try {
+      await marketplace.placeBid(item.auctionId, { value: bidAmount });
+      setUserBids((prevBids) => ({
+        ...prevBids,
+        [item.auctionId]: bidAmount
+      }));
+      await loadMarketplaceItems();
+      toast.success('Bid placed successfully!', { position: 'top-center' });
+
+      // Close the popup after placing the bid
+      setIsPopupOpen(false);
+    } catch (error) {
+      console.error('Error placing bid:', error);
+      toast.error('Failed to place bid', { position: 'top-center' });
+    }
+  };
+
+
+  const handleBidChange = (itemId, value) => {
+    setBidAmounts((prevBidAmounts) => ({
+      ...prevBidAmounts,
+      [itemId]: value
+    }));
+  };
+
   useEffect(() => {
     const storedLikes = JSON.parse(localStorage.getItem('likes')) || {};
     const storedLikedItems = JSON.parse(localStorage.getItem('likedItems')) || {};
@@ -192,6 +281,39 @@ const HomePage = ({ marketplace, nft }) => {
   useEffect(() => {
     loadMarketplaceItems();
   }, [selectedFilter, sortOrder, marketplace, nft]);
+
+  const getTimeRemaining = (endTime) => {
+    const total = Date.parse(endTime) - Date.now();
+    const seconds = Math.floor((total / 1000) % 60);
+    const minutes = Math.floor((total / 1000 / 60) % 60);
+    const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+    const days = Math.floor(total / (1000 * 60 * 60 * 24));
+    return {
+      total,
+      days,
+      hours,
+      minutes,
+      seconds,
+    };
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      setTimeRemaining((prevRemaining) => {
+        const newRemaining = {};
+        items.forEach((item) => {
+          if (item.saleType === 'Timed Auction') {
+            const timeLeft = item.auctionEnd - now;
+            newRemaining[item.auctionId] = timeLeft > 0 ? timeLeft : 0;
+          }
+        });
+        return newRemaining;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [items]);
 
   const formatWalletAddress = (address) => {
     if (!address) return '';
@@ -209,9 +331,10 @@ const HomePage = ({ marketplace, nft }) => {
           <ToastContainer />
           <div className="home-content">
             <div className="home-text">
-              <h1>Connecting Artists <br /> and Collectors <br />through
+              <h1>
+                Connecting Artists <br /> and Collectors <br /> through
                 <span className='Fonteffect'>
-                <br /> NFT Innovation
+                  <br /> NFT Innovation
                 </span>
               </h1>
               <p>Discover, collect, and trade exclusive NFTs effortlessly!</p>
@@ -280,23 +403,46 @@ const HomePage = ({ marketplace, nft }) => {
               {items.map((item, idx) => (
                 <div key={idx} className="nft-card">
                   <div className="nft-image-container">
-                    <button className="like-button" onClick={() => handleLike(item.itemId)}>
-                      <FaHeart className="like-icon" style={{ color: likedItems[item.itemId] ? 'red' : 'white' }} /> {likes[item.itemId] || 0}
+                    <button className="like-button" onClick={() => handleLike(item.itemId || item.auctionId)}>
+                      <FaHeart className="like-icon" style={{ color: likedItems[item.itemId || item.auctionId] ? 'red' : 'white' }} /> {likes[item.itemId || item.auctionId] || 0}
                     </button>
                     <img src={item.image} alt={item.name} className="nft-card-img" />
                   </div>
                   <div className="nft-card-body">
                     <h3 className="nft-card-title">{item.name}</h3>
                     <p className="nft-card-description">{item.description}</p>
-                    <p className="nft-card-creator">Created By: {formatWalletAddress(item.creator)}</p> {/* Display formatted creator address */}
+                    <p className="nft-card-creator">Created By: {formatWalletAddress(item.creator)}</p>
                     <p className="nft-card-price">
-                      {ethers.utils.formatEther(item.totalPrice)} ETH
+                      {item.saleType === 'Fixed Price' ? (
+                        `${ethers.utils.formatEther(item.totalPrice)} ETH`
+                      ) : (
+                        <>
+                          <span>Auction Ends:<br />{getTimeRemaining(item.auctionEnd).days}d {getTimeRemaining(item.auctionEnd).hours}h {getTimeRemaining(item.auctionEnd).minutes}m {getTimeRemaining(item.auctionEnd).seconds}s</span>
+                        </>
+                      )}
                     </p>
-                    <button className="buy-button" onClick={() => buyMarketItem(item)}>
-                      Buy
-                    </button>
+                    {item.saleType === 'Fixed Price' ? (
+                      <button className="buy-button" onClick={() => buyMarketItem(item)}>Buy</button>
+                    ) : (
+                      <>
+                        <button className="place-bid-button" onClick={() => handleOpenPopup(item)}>Place Bid</button>
+                      </>
+                    )}
                     <div className="nft-card-actions">
                       <Confetti active={confettiTrigger[item.itemId]} />
+                      <Popup
+                        trigger={<button className="share-button">Share</button>}
+                        position="center center"
+                        closeOnDocumentClick
+                        contentStyle={{ padding: '0', border: 'none', width: '300px', height: '200px' }}
+                        overlayStyle={{ background: 'rgba(0, 0, 0, 0.5)' }}
+                      >
+                        {close => (
+                          <div className="popup-content-home">
+                            <FaTimes className="close-icon" onClick={close} />
+                          </div>
+                        )}
+                      </Popup>
                     </div>
                   </div>
                 </div>
@@ -304,9 +450,36 @@ const HomePage = ({ marketplace, nft }) => {
             </div>
           </div>
         ) : (
-          <main style={{ padding: '1rem 0', textAlign: 'center' }}>No listed assets</main>
+          <div className="no-assets">
+            <img src={noAssetsGif} alt="No listed assets" className="no-assets-gif" /> 
+            <span className="lastline">No listed assets</span>
+          </div>
         )}
       </div>
+  
+      <Popup open={isPopupOpen} closeOnDocumentClick onClose={() => setIsPopupOpen(false)}>
+        <div className="popup-content-home">
+          <FaTimes className="close-icon-home" onClick={() => setIsPopupOpen(false)} />
+          <h3>Place Your Bid</h3>
+          {currentBidItem && (
+            <>
+              <span>Highest Bid: {ethers.utils.formatEther(currentBidItem.highestBid || '0')} ETH</span>
+              <input
+                type="number"
+                placeholder="Enter bid amount in ETH"
+                value={popupBidAmount}
+                onChange={(e) => setPopupBidAmount(e.target.value)}
+                min="0.01"
+                step="0.01"
+                className="popup-bid-input-home"
+              />
+              <button className="place-bid-button" onClick={handlePlaceBid}>
+                Confirm Bid
+              </button>
+            </>
+          )}
+        </div>
+      </Popup>
     </div>
   );
 };
